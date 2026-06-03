@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Mariia Kvasnevska</title>
+        <style is:global>
+            * {
+                box-sizing: border-box;
+            }
+            .index-wrapper {
+                position: fixed;
+                inset: 0;
+                z-index: 10;
+                height: 100vh;
+                height: 100dvh;
+                width: 100vw;
+                visibility: hidden;
+                opacity: 0;
+                padding: 0;
+                overflow-y: auto;
+                box-sizing: border-box;
+                transition:
+                    opacity 0.3s ease,
+                    visibility 0.3s ease;
+            }
+
+            .index-wrapper.is-visible {
+                visibility: visible;
+                opacity: 1;
+            }
+
+            .index-content {
+                padding: 5px;
+                width: 100%;
+                min-height: 100%;
+                box-sizing: border-box;
+                color: black;
+            }
+
+            .index-close {
+                display: inline-block;
+                font-size: 15px;
+                font-weight: 500;
+                cursor: pointer;
+                margin-bottom: 40px;
+            }
+
+            /* Стили для списка проектов */
+            #index-project-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Строка отдельного проекта */
+            .index-project-row {
+                padding-bottom: 5px;
+                display: flex;
+                flex-direction: row;
+                cursor: pointer;
+                transform: translateX(-100%);
+                transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+                will-change: transform;
+            }
+
+            .index-wrapper.is-visible .index-project-row {
+                transform: translateX(0);
+            }
+
+            .index-text {
+                padding: 5px;
+                visibility: hidden;
+                display: none;
+            }
+
+            .index-project-row:hover .index-text {
+                display: inline-block;
+                visibility: visible;
+            }
+
+            /* Лента миниатюр */
+            .index-thumbnails {
+                display: flex;
+                flex-direction: row;
+                height: 50px;
+                gap: 5px;
+            }
+
+            .index-thumbnails img {
+                height: 100%;
+                width: auto;
+                object-fit: cover;
+                display: block;
+                /* GPU-слой для пиксельной стабильности. */
+                transform: translateZ(0);
+                backface-visibility: hidden;
+            }
+            /* Контейнер для пары low+hi картинки: hi плавно fade-in поверх
+               low, никогда не меняем src у уже отображаемого <img>, чтобы
+               не было микроклира между low и hi. */
+            .index-thumbnails .thumb-pair {
+                position: relative;
+                height: 100%;
+                flex-shrink: 0;
+            }
+            .index-thumbnails .thumb-pair .thumb-hi {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                transition: opacity 0.25s ease;
+            }
+            .index-thumbnails .thumb-pair .thumb-hi.is-ready {
+                opacity: 1;
+            }
+
+            /* Текст названия проекта */
+            .index-project-title {
+            }
+
+            .contacts {
+                padding: 5px;
+                width: 100%;
+                text-align: center;
+            }
+            .text-mask {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                overflow: hidden;
+                height: fit-content;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #animated-text {
+            }
+
+            #loader-text {
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            @font-face {
+                font-family: "fOnT";
+                src: url("/font/KTF2101-Regular.otf") format("opentype");
+            }
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                height: 100dvh;
+                overflow: hidden;
+                background-color: white;
+                font-family:
+                    Helvetica Neue,
+                    Arial,
+                    system-ui,
+                    sans-serif;
+                font-weight: 500;
+                color: black;
+                font-size: 14px;
+                line-height: 1.15;
+                letter-spacing: 0.01em;
+            }
+
+            #loader {
+                position: fixed;
+                inset: 0;
+                background-color: white;
+                z-index: 99999;
+                color: black;
+                transition: opacity 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+            }
+
+            #loader.is-hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            img {
+                display: block;
+            }
+            video {
+                display: block;
+            }
+            #viewport {
+                width: 100%;
+                height: 100vh;
+                height: 100dvh;
+                position: relative;
+                cursor: default;
+                overflow: hidden;
+            }
+            #world,
+            .world__inner {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                inset: 0;
+            }
+            /* Два горизонтальных ряда, каждый ровно 50% высоты экрана. */
+            .col-wrapper {
+                position: absolute;
+                left: 0;
+                right: 0;
+                height: 50%;
+                overflow-x: auto;
+                overflow-y: hidden;
+                pointer-events: none;
+                scrollbar-width: none;
+                overscroll-behavior-x: none;
+                transform: translateZ(0);
+                will-change: transform;
+                contain: paint;
+            }
+            .col-wrapper::-webkit-scrollbar {
+                display: none;
+            }
+            .left-wrapper {
+                top: 0;
+                z-index: 1;
+            }
+            .right-wrapper {
+                top: 50%;
+                z-index: 1;
+            }
+            .left,
+            .right {
+                height: 100%;
+                width: max-content;
+                pointer-events: auto;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 44px;
+                padding: 36px;
+            }
+            .left {
+                padding-inline: 10px;
+                padding-bottom: 44px;
+            }
+            .right {
+                padding-top: 44px;
+            }
+            /* Нижний ряд: спейсеры по 100vw+10px с обеих сторон.
+               Старт: scrollLeft = maxR — виден только правый спейсер.
+               Финиш (top на maxL): scrollLeft = 0 — виден только левый,
+               все айтемы прошли и ушли. Айтемы выезжают слева, движутся
+               вправо, выходят справа. */
+            .right {
+                padding-left: calc(100vw + 10px);
+                padding-right: calc(100vw + 10px);
+            }
+            .world-image {
+                position: relative;
+                user-select: none;
+                cursor: zoom-in;
+
+                height: 100%;
+                width: auto;
+                display: flex;
+                flex-direction: column;
+                z-index: 1;
+                flex-shrink: 0;
+                transform: translate3d(5%, 0, 0);
+                opacity: 0;
+                transition:
+                    transform 0.6s cubic-bezier(0.77, 0, 0.175, 1),
+                    opacity 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+                will-change: transform, opacity;
+                backface-visibility: hidden;
+            }
+            .world-image.is-revealed {
+                transform: translate3d(0, 0, 0);
+                opacity: 1;
+            }
+            /* Нижний ряд без reveal-анимации — он всегда «готов»,
+               появляется/исчезает за счёт скролла. */
+            .right > .world-image {
+                transform: none;
+                opacity: 1;
+                transition: none;
+                will-change: auto;
+            }
+            .world-image > img,
+            .world-image > video {
+                height: 100%;
+                width: auto;
+                transform: translateZ(0);
+                backface-visibility: hidden;
+            }
+            /* Обрезаем 1px по краю видео — прячет edge anti-aliasing от GPU
+               и encoding-артефакты H.264 на macroblock-границах, которые
+               видны как "лишние пиксели" вокруг кадра. У <img> такого нет
+               (sharp/JPEG не даёт edge bleeding). */
+            .world-image > video {
+                /*clip-path: inset(1px);*/
+            }
+            /* Persistent poster sits behind the video so there's never a
+               white-flash window between <video> insertion and first frame. */
+            .world-image > .world-image__poster {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                z-index: 0;
+                pointer-events: none;
+            }
+            .world-image > video {
+                position: relative;
+                z-index: 1;
+            }
+            .world-image.returning {
+                transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+            .world-image:hover {
+                z-index: 2;
+            }
+            .image-desc {
+                position: absolute;
+                top: 5px;
+                left: 5px;
+                color: black;
+                z-index: -1;
+            }
+
+            .grid-overlay {
+                position: absolute;
+                inset: 0;
+                background-color: white;
+                z-index: 9;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+                will-change: opacity;
+            }
+            .grid-overlay.is-visible {
+                opacity: 0.95;
+                pointer-events: auto;
+            }
+
+            #cursor-image {
+                position: fixed;
+                top: 0;
+                left: 0;
+                pointer-events: none;
+                z-index: 9;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+                will-change: transform, opacity;
+            }
+            #cursor-image.visible {
+                opacity: 1;
+            }
+            #cursor-image img {
+                display: block;
+                box-shadow: none;
+                filter: none;
+                max-width: 100%;
+            }
+            #cursor-image img[src=""],
+            #cursor-image img:not([src]) {
+                visibility: hidden;
+            }
+            .ui-layer {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(1, 1fr);
+                z-index: 90;
+                padding: 10px;
+                text-align: center;
+            }
+            .ui-layer__bottom {
+                position: fixed;
+                bottom: 0;
+                width: 100vw;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 5px;
+                z-index: 90;
+                padding: 10px;
+                box-sizing: border-box;
+                color: black;
+                font-weight: 500;
+
+                opacity: 1;
+                transition: opacity 0.2s cubic-bezier(0.77, 0, 0.175, 1);
+            }
+
+            .ui-layer__bottom.is-hidden {
+                transition: opacity 0.2s cubic-bezier(0.77, 0, 0.175, 1);
+                opacity: 0;
+            }
+
+            .ui-layer__cat-navigation {
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+                justify-content: center;
+                align-items: center;
+                margin-inline: auto;
+                transition: background-color 0.3s
+                    cubic-bezier(0.77, 0, 0.175, 1);
+            }
+            .btn-custom__background {
+                width: fit-content;
+                pointer-events: auto;
+                cursor: pointer;
+                transition:
+                    color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
+                    padding 0.3s linear;
+            }
+            .btn-custom__background:hover,
+            .btn-custom__background.is-active {
+                padding-left: 15px;
+                padding-right: 15px;
+                background-color: #f61d3d;
+            }
+            #index-btn.is-active {
+                cursor: zoom-out;
+            }
+            .btn-custom__inner {
+                color: black;
+            }
+            .instructions {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 11;
+                cursor: pointer;
+                display: flex;
+
+                transition: opacity 0.3s cubic-bezier(0.77, 0, 0.175, 1);
+                opacity: 1;
+            }
+            .instructions.is-hidden {
+                opacity: 0;
+            }
+            .divider {
+                padding-top: 2px;
+                padding-bottom: 2px;
+                width: 1px;
+                height: 100%;
+                background-color: black;
+                pointer-events: none;
+            }
+            .title {
+                color: black;
+            }
+            .color-box {
+                background-color: #fffdcf;
+            }
+            .information {
+                position: fixed;
+                inset: 0;
+                z-index: 99;
+                padding: 5px;
+                font-size: 64px;
+                font-weight: 400;
+                height: 100vh;
+                height: 100dvh;
+                width: 100vw;
+                overflow-y: auto;
+                text-align: left;
+                box-sizing: border-box;
+                overscroll-behavior: contain;
+            }
+            .information-wrapper {
+                position: fixed;
+                inset: 0;
+                z-index: 100;
+                height: 100vh;
+                height: 100dvh;
+                width: 100vw;
+                visibility: hidden;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            .information-wrapper.is-visible {
+                visibility: visible;
+                opacity: 1;
+                cursor: zoom-out;
+            }
+            #info-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: -1;
+                pointer-events: none;
+            }
+            .yellow-bg {
+                width: fit-content;
+                background-color: #fffdcf;
+            }
+            #image-cursor-desc {
+                position: fixed;
+                top: 0;
+                left: 0;
+                pointer-events: none;
+                z-index: 1000;
+                opacity: 0;
+                white-space: nowrap;
+                background-color: #f61d3d;
+                color: white;
+                padding: 2px 8px;
+                font-size: 11px;
+                text-transform: uppercase;
+                transition: opacity 0.3s ease;
+                will-change: transform;
+            }
+            #image-cursor-desc.is-visible {
+                opacity: 1;
+            }
+            #top-image-description {
+                position: fixed;
+                top: 0;
+                padding: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1000;
+
+                visibility: hidden;
+                pointer-events: none;
+            }
+            #top-image-description.is-visible {
+                visibility: visible !important;
+            }
+            .view-image-wrapper {
+                cursor: none;
+                z-index: 89;
+                position: relative;
+                transform: translate3d(0, 110%, 0);
+                transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+                will-change: transform;
+                backface-visibility: hidden;
+            }
+            .view-image-wrapper.is-visible {
+                transform: translate3d(0, 0, 0);
+            }
+            .view-image > img,
+            .view-image > video {
+                transform: translateZ(0);
+                backface-visibility: hidden;
+            }
+            /* Те же edge-артефакты убираем во вьюере, см. main page rule выше. */
+            .view-image > video {
+                /*clip-path: inset(1px);*/
+            }
+            .view-image {
+                margin-inline: auto;
+                height: 100vh;
+                width: 100vw;
+                cursor: auto;
+                position: relative;
+                box-sizing: border-box;
+                /* Flex-центр: медиа получает явные целые пиксели из JS,
+                   и автоматически центрируется. Без object-fit, без
+                   субпиксельного шиммера у видео. */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .view-image__text {
+                opacity: 0;
+                position: fixed;
+                top: 0;
+                height: 100vh;
+                width: 100vw;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                gap: 5px;
+                padding: 10px;
+                box-sizing: border-box;
+
+                pointer-events: none;
+
+                color: black;
+                font-weight: 500;
+                z-index: 110;
+            }
+            .view-image__text__inner {
+                width: 100vw;
+                margin-inline: auto;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+            }
+            .view-image__text.is-visible {
+                transition: opacity 0.2s cubic-bezier(0.77, 0, 0.175, 1);
+                opacity: 1;
+            }
+
+            .viewer-thumbs {
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+                max-width: 100vw;
+                overflow-x: auto;
+                scroll-behavior: smooth;
+                margin-inline: auto;
+                height: 50px;
+                pointer-events: none;
+                margin-bottom: 10px;
+                padding: 0 5px;
+                box-sizing: border-box;
+            }
+            .viewer-thumbs::-webkit-scrollbar {
+                display: none;
+            }
+            .viewer-thumbs::after {
+                content: "";
+                min-width: 1px;
+                padding-right: 5px;
+                flex-shrink: 0;
+            }
+            .viewer-thumbs .viewer-thumb {
+                height: 100%;
+                width: auto;
+                object-fit: cover;
+                display: block;
+                cursor: pointer;
+                filter: grayscale(1);
+                opacity: 0.2;
+                transition: opacity 0.15s ease;
+                flex-shrink: 0;
+            }
+            .viewer-thumbs .viewer-thumb:hover,
+            .viewer-thumbs .viewer-thumb.is-active {
+                opacity: 1;
+                filter: grayscale(0);
+            }
+
+            .view-image__text.is-visible .viewer-thumbs {
+                pointer-events: auto;
+            }
+
+            .video-controls {
+                display: none;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                z-index: 110;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.4s ease;
+            }
+            .video-controls.is-visible {
+                opacity: 1;
+                pointer-events: auto;
+                cursor: pointer;
+            }
+            .video-controls > * {
+                pointer-events: auto;
+                cursor: pointer;
+            }
+
+            .opacity {
+                opacity: 0.5;
+            }
+            .white-bg {
+                background-color: white;
+            }
+            .red-bg {
+                background-color: #f61d3d;
+            }
+            .mr {
+                margin-right: 5px;
+            }
+            .video-controls__play-pause {
+                margin-left: 15px;
+                margin-right: 5px;
+                transition:
+                    color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
+                    padding 0.3s linear;
+            }
+            .video-controls__play-pause:hover {
+                padding-left: 15px;
+                padding-right: 15px;
+                background-color: #f61d3d;
+            }
+            .video-controls__less-more {
+                margin-left: 5px;
+                margin-right: 5px;
+                transition:
+                    color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
+                    padding 0.3s linear;
+            }
+            .video-controls__less-more:hover {
+                padding-left: 15px;
+                padding-right: 15px;
+                background-color: #fffdcf;
+            }
+            .video-controls__sound {
+                margin-left: 5px;
+                margin-right: 5px;
+                transition:
+                    color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
+                    padding 0.3s linear;
+            }
+            .video-controls__sound:hover {
+                padding-left: 15px;
+                padding-right: 15px;
+                background-color: #fffdcf;
+            }
+            .video-controls__time {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-left: 5px;
+                margin-right: 15px;
+            }
+            .video-controls__time-duration {
+                color: black;
+                opacity: 0.6;
+            }
+            .viewer-nav {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                width: 50%;
+                z-index: 105;
+                display: none;
+            }
+            .viewer-prev {
+                left: 0;
+            }
+            .viewer-next {
+                right: 0;
+            }
+            .view-image__text__close {
+                text-align: right;
+                pointer-events: auto;
+                cursor: zoom-out;
+                transition:
+                    color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
+                    padding 0.3s linear;
+            }
+            .view-image__text__close:hover {
+                padding-left: 15px;
+                padding-right: 15px;
+                background-color: #fffdcf;
+            }
+            .world-image.is-filtered-out {
+                display: none !important;
+            }
+            .social-links {
+                display: flex;
+                gap: 5px;
+                width: fit-content;
+                padding-bottom: 10px;
+                cursor: pointer;
+            }
+            .yellow-bg:hover {
+                background-color: #f61d3d;
+            }
+            .info-text {
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="loader">
+            <div id="loader-text">0%</div>
+            <div class="text-mask">
+                <span id="animated-text">Mariia Kvasnevska</span>
+            </div>
+            <div></div>
+        </div>
+
+        <div id="viewport">
+            <div class="video-controls">
+                <div class="video-controls__play-pause">Pause</div>
+                <div class="video-controls__sound">Unmute</div>
+                <div
+                    class="video-controls__progress"
+                    style="
+                        flex-grow: 1;
+                        margin: 0 5px;
+                        position: relative;
+                        height: 3px;
+                        display: flex;
+                        align-items: center;
+                        cursor: pointer;
+                        background-color: rgba(0, 0, 0, 0.05);
+                    "
+                >
+                    <div style="width: 100%; height: 3px">
+                        <div
+                            class="video-controls__progress-bar"
+                            style="
+                                width: 0%;
+                                height: 100%;
+                                background-color: rgba(32, 32, 32, 0.5);
+                                will-change: width;
+                            "
+                        >
+                        </div>
+                    </div>
+                </div>
+                <div class="video-controls__time">
+                    <div class="video-controls__time-current">0:00</div>
+                    <div class="video-controls__time-duration">0:00</div>
+                </div>
+            </div>
+
+            <div class="view-image__text">
+                <div class="view-image__text__close">Close</div>
+                <div class="view-image__text__inner">
+                    <div class="viewer-thumbs"></div>
+                    <div class="view-image__text__caption">
+                        <span class="red-bg mr project-title-ui">
+                            Aisenberg Icons
+                        </span>
+                        <span class="yellow-bg project-services"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view-image-wrapper">
+                <div class="view-image"></div>
+            </div>
+
+            <div class="information-wrapper">
+                <canvas id="info-background" width="1920" height="968"></canvas>
+                <div id="information" class="information">
+                    <div class="social-links">
+                        <div class="yellow-bg">Instagram</div>
+                        <div class="yellow-bg">E-mail</div>
+                    </div>
+                    <div class="info-text">
+                        <div>
+                            Creative Producer, Stylist, Art Director.
+                            <br />
+                            Born in Ukraine; based in Berlin.
+                        </div>
+                        <div style="text-indent: 100px;">
+                            As a stylist and costume designer, she has worked on
+                            campaigns and lookbooks ( e-commerce) featured in
+                            Vogue UA, Elle UA, 10 Magazines DE, and Kaltblut.
+                            Her portfolio includes commercial projects for BMW
+                            and various music videos. She worked with brands
+                            such as Jacquemus, Mugler, Alexander Wang, Coperni,
+                            Stella McCartney, Proenza Schouler, Isabel Marant,
+                            Ami Paris, and MISBHV, alongside Ukrainian labels
+                            Paskal, Gudu and so on. She also works extensively
+                            with jewelry brands, including Panconesi,
+                            Completedworks, La2l, and Rimmart.
+                        </div>
+                        <div style="text-indent: 100px;">
+                            Her production experience covers a wide range of
+                            events, from launching educational courses to
+                            organizing art exhibitions, including her work as
+                            executive producer for the Poligon Project—a
+                            community and art exhibition for emerging Ukrainian
+                            artists. Currently based in Berlin, she works in the
+                            retail sector, bringing expertise in offline
+                            marketing and visual merchandising to the management
+                            of multiple retail locations, focusing on the
+                            intersection of brand identity and sales
+                            performance.
+                        </div>
+                        <div style="text-indent: 100px;">
+                            Her visual language is shaped by two distinct
+                            sources of inspiration: a lifelong background in
+                            movement and dance, which informs how she anchors
+                            imagery through the body, and the raw, rebellious
+                            energy of the Ukrainian youth cultural scene.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-layer">
+                <div id="top-image-description">Desc</div>
+            </div>
+
+            <div class="ui-layer__bottom">
+                <div class="ui-layer__bottom__inner">
+                    <span class="btn-custom__background">Instagram</span>,
+                    <span class="btn-custom__background">Email</span>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <div class="ui-layer__cat-navigation">
+                    <div class="title">Mariia Kvasnevska</div>
+                    <div class="divider"></div>
+                    <div id="index-btn" class="btn-custom__background">
+                        <div class="btn-custom__inner">Index</div>
+                    </div>
+                    <div class="divider"></div>
+                    <div id="filter-photo" class="btn-custom__background">
+                        <div class="btn-custom__inner">Photography</div>
+                    </div>
+                    <div class="divider"></div>
+                    <div id="filter-video" class="btn-custom__background">
+                        <div class="btn-custom__inner">Video</div>
+                    </div>
+                    <div class="divider"></div>
+                    <div id="information-btn" class="btn-custom__background">
+                        <div class="btn-custom__inner">About</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="world">
+                <div class="world__inner">
+                    <div class="col-wrapper left-wrapper">
+                        <div class="left"></div>
+                    </div>
+
+                    <div class="col-wrapper right-wrapper">
+                        <div class="right"></div>
+                    </div>
+                </div>
+
+                <div class="index-wrapper">
+                    <div class="index-content">
+                        <!--<div class="index-close btn-custom__background">
+                            <div class="btn-custom__inner">Close Index</div>
+                        </div>-->
+
+                        <ul id="index-project-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viewer-nav viewer-prev"></div>
+            <div class="viewer-nav viewer-next"></div>
+
+            <div class="grid-overlay"></div>
+        </div>
+
+        <script>
+            import "../scripts/main.ts";
+        </script>
+    </body>
+</html>

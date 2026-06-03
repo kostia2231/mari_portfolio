@@ -1,0 +1,589 @@
+{
+    "projects": [
+        {
+            "tag": "Aisenberg Denim 2025",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/01",
+                    "w": 6000,
+                    "h": 4000,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/02",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/03",
+                    "w": 4000,
+                    "h": 6000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/04",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/05",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/06",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/07",
+                    "w": 5877,
+                    "h": 3918
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/08",
+                    "w": 5877,
+                    "h": 3918
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/09",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/10",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/11",
+                    "w": 5877,
+                    "h": 3918
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/12",
+                    "w": 3911,
+                    "h": 5866
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/13",
+                    "w": 5877,
+                    "h": 3918
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/14",
+                    "w": 4000,
+                    "h": 6000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/15",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/16",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/17",
+                    "w": 3911,
+                    "h": 5866
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/18",
+                    "w": 3911,
+                    "h": 5866
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/19",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/20",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/21",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/22",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/23",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/24",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/25",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-denim-2025/26",
+                    "w": 3918,
+                    "h": 5877
+                }
+            ],
+            "services": "Art Direction, Producing, Styling",
+            "position": 1
+        },
+        {
+            "tag": "RoomRoom:Sirens",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/roomroom-sirens/video-01",
+                    "w": 2048,
+                    "h": 1536,
+                    "featured": true
+                }
+            ],
+            "position": 2
+        },
+        {
+            "tag": "LBK Production",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/lbk-production/01",
+                    "w": 1350,
+                    "h": 1080,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/lbk-production/02",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/lbk-production/03",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/lbk-production/04",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/lbk-production/05",
+                    "w": 1080,
+                    "h": 1350
+                }
+            ],
+            "services": "Art Direction, Producing",
+            "position": 3
+        },
+        {
+            "tag": "Renoire Studio",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/01",
+                    "w": 1920,
+                    "h": 2880,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/02",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/03",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/04",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/05",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/06",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/07",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/08",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/09",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/10",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/renoire-studio/11",
+                    "w": 1920,
+                    "h": 1280
+                }
+            ],
+            "services": "Art Direction, Producing",
+            "position": 4
+        },
+        {
+            "tag": "Home Campaign pt.1",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/01",
+                    "w": 4480,
+                    "h": 6272,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/02",
+                    "w": 6267,
+                    "h": 8779
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/03",
+                    "w": 6717,
+                    "h": 9490
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/04",
+                    "w": 6720,
+                    "h": 4480
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/05",
+                    "w": 4480,
+                    "h": 6720
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/06",
+                    "w": 6720,
+                    "h": 4480
+                }
+            ],
+            "services": "Art Direction, Producing",
+            "position": 5
+        },
+        {
+            "tag": "Home Campaign pt.2",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/01",
+                    "w": 4380,
+                    "h": 6570,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/02",
+                    "w": 4480,
+                    "h": 6720
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/03",
+                    "w": 6582,
+                    "h": 4388
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/04",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/05",
+                    "w": 6720,
+                    "h": 4480
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/06",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/07",
+                    "w": 4388,
+                    "h": 6582
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/08",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/09",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/10",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/11",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/12",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/13",
+                    "w": 6570,
+                    "h": 4380
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/14",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/15",
+                    "w": 4380,
+                    "h": 6570
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/16",
+                    "w": 4480,
+                    "h": 6720
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/17",
+                    "w": 4380,
+                    "h": 6570
+                }
+            ]
+        },
+        {
+            "tag": "NEZNANA",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/neznana/video-01",
+                    "w": 3840,
+                    "h": 2160,
+                    "featured": true
+                }
+            ]
+        },
+        {
+            "tag": "RoomRoom",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/roomroom/01",
+                    "w": 4000,
+                    "h": 6000,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/roomroom/02",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/roomroom/03",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/roomroom/04",
+                    "w": 6000,
+                    "h": 4000
+                }
+            ]
+        },
+        {
+            "tag": "Solar Silver",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/01",
+                    "w": 6000,
+                    "h": 4000,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/02",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/03",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/04",
+                    "w": 5877,
+                    "h": 3918
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/05",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/06",
+                    "w": 4000,
+                    "h": 6000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/07",
+                    "w": 4000,
+                    "h": 6000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/08",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/09",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/10",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/11",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/12",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/13",
+                    "w": 5866,
+                    "h": 3911
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/14",
+                    "w": 3918,
+                    "h": 5877
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/15",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver/16",
+                    "w": 4000,
+                    "h": 6000
+                }
+            ]
+        }
+    ]
+}
