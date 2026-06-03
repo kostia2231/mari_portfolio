@@ -207,6 +207,7 @@ function hideLoader() {
     if (!loader) return
 
     loader.classList.add("is-hidden")
+    document.querySelector(".instructions")?.classList.remove("is-hidden")
     document.querySelectorAll<HTMLElement>(".world-image").forEach((el) => {
         el.classList.add("is-revealed")
         el.addEventListener(
