@@ -147,6 +147,7 @@ function trackLoading() {
     const tick = () => {
         if (completed) return
         loaded++
+        if (loaded >= total) completed = true
     }
 
     /** Hard fail-safe: forces 100% после таймаута, чтобы лоадер никогда
