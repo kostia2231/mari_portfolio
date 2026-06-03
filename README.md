@@ -57,9 +57,19 @@ npm run dev
 
 Откроется на `http://localhost:4321`. Использует `public/projects.json` напрямую.
 
-## Деплой
+## Деплой (Netlify)
 
-Подключить репо к Cloudflare Pages, билд-команда `npm run build`, output `dist/`. При push на main — автоматический деплой.
+1. Подключи репо к Netlify.
+2. Build команда (`npm run build`) и output dir (`dist`) уже прописаны
+   в `netlify.toml` — Netlify подхватит автоматически.
+3. В Netlify UI → Site settings → Environment variables добавь:
+   `PUBLIC_R2_BASE = https://<your-r2-public-domain>`
+4. Перед каждым деплоем, который меняет состав медиа:
+   - локально `npm run upload`
+   - закоммить обновлённый `public/projects.json`
+   - push — Netlify соберёт и опубликует.
+
+`R2_*` креды на Netlify НЕ нужны — `upload.mjs` крутится только локально.
 
 ## Структура проекта
 
