@@ -488,10 +488,8 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
     li.className = "index-project-row"
     li.style.transitionDelay = `${idx * 0.05}s`
 
-    const count = project.files.length
-    const countLine = count > 1 ? `<br>${count} items` : ""
     li.innerHTML = `
-        <div class="index-text">${project.tag}${countLine}</div>
+        <div class="index-text">${idx + 1}. ${project.tag}</div>
         <div class="index-thumbnails"></div>
     `
 
@@ -1199,6 +1197,9 @@ function initIndexButton() {
             btn.classList.add("is-active")
             gridOverlay.classList.add("is-visible")
             pauseAllWorldVideos()
+            wrap.querySelectorAll<HTMLImageElement>("img[loading='lazy']").forEach((img) => {
+                img.loading = "eager"
+            })
         }
     })
 
