@@ -383,6 +383,7 @@
                 z-index: 90;
                 padding: 10px;
                 text-align: center;
+                pointer-events: none;
             }
             .ui-layer__bottom {
                 position: fixed;
@@ -551,9 +552,11 @@
                 transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
                 will-change: transform;
                 backface-visibility: hidden;
+                pointer-events: none;
             }
             .view-image-wrapper.is-visible {
                 transform: translate3d(0, 0, 0);
+                pointer-events: auto;
             }
             .view-image > img,
             .view-image > video {
@@ -610,6 +613,9 @@
             .view-image__text.is-visible {
                 transition: opacity 0.2s cubic-bezier(0.77, 0, 0.175, 1);
                 opacity: 1;
+            }
+            .view-image__text.is-visible .view-image__text__close {
+                pointer-events: auto;
             }
 
             .viewer-thumbs {
@@ -754,7 +760,7 @@
             }
             .view-image__text__close {
                 text-align: right;
-                pointer-events: auto;
+                pointer-events: none;
                 cursor: zoom-out;
                 transition:
                     color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
@@ -782,6 +788,122 @@
                 display: flex;
                 flex-direction: column;
                 gap: 30px;
+            }
+
+            @media (hover: none) {
+                .btn-custom__background:hover {
+                    padding-left: unset;
+                    padding-right: unset;
+                    background-color: transparent;
+                }
+                .btn-custom__background:active {
+                    padding-left: 15px;
+                    padding-right: 15px;
+                    background-color: #f61d3d;
+                }
+                .view-image__text__close:hover,
+                .video-controls__play-pause:hover,
+                .video-controls__less-more:hover,
+                .video-controls__sound:hover {
+                    padding-left: unset;
+                    padding-right: unset;
+                    background-color: transparent;
+                }
+                .yellow-bg:hover {
+                    background-color: #fffdcf;
+                }
+                .world-image:hover {
+                    z-index: 1;
+                }
+                .viewer-thumbs .viewer-thumb:hover {
+                    opacity: 0.2;
+                    filter: grayscale(1);
+                }
+                .index-project-row:hover .index-text {
+                    display: none;
+                    visibility: hidden;
+                }
+            }
+
+            @media (max-width: 767px) {
+                body,
+                html {
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    height: auto;
+                    min-height: 100dvh;
+                }
+                #viewport {
+                    overflow: visible;
+                    height: auto;
+                    min-height: 100dvh;
+                }
+                #world,
+                .world__inner {
+                    position: relative;
+                    height: auto;
+                }
+                .col-wrapper {
+                    position: static;
+                    height: auto;
+                    overflow: visible;
+                    contain: none;
+                    will-change: auto;
+                    transform: none;
+                    pointer-events: auto;
+                }
+                .right-wrapper {
+                    display: none;
+                }
+                .left {
+                    flex-direction: column;
+                    width: 100%;
+                    height: auto;
+                    padding: 10px;
+                    padding-top: 36px;
+                    padding-bottom: 36px;
+                    gap: 16px;
+                }
+                .world-image {
+                    width: 100%;
+                    height: auto;
+                    transform: none !important;
+                    opacity: 1 !important;
+                    transition: none !important;
+                    will-change: auto !important;
+                }
+                .world-image > img,
+                .world-image > video {
+                    width: 100%;
+                    height: auto;
+                }
+                .view-image-wrapper {
+                    position: fixed;
+                    inset: 0;
+                }
+                .video-controls {
+                    position: fixed;
+                    top: 50%;
+                }
+                .information {
+                    font-size: 32px;
+                }
+                #top-image-description {
+                    display: none !important;
+                }
+                .instructions .title,
+                .instructions .title + .divider {
+                    display: none;
+                }
+                .instructions {
+                    top: 0;
+                    left: 0;
+                    transform: none;
+                    width: 100%;
+                    justify-content: center;
+                    padding: 10px;
+                    box-sizing: border-box;
+                }
             }
         </style>
     </head>

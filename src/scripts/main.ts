@@ -44,6 +44,8 @@ let isInfoOpen = false
 // из мест где меняется ширина контента (фильтры) — до следующего paint.
 let resyncBottom: () => void = () => {}
 
+const isMobile = () => window.innerWidth < 768
+
 /* ============================================================
    DOM helpers
    ============================================================ */
@@ -358,20 +360,22 @@ function renderGallery(items: GalleryItem[]) {
     // Верх: все айтемы в прямом порядке.
     items.forEach((item, i) => addToCol(item, i, leftCol))
 
-    // Низ: для каждого верхнего айтема выбираем СЛУЧАЙНЫЙ ДРУГОЙ файл
-    // из того же проекта (если у проекта > 1 файла). Реверс для змейки.
-    const bottomItems = items
-        .map(pickBottomItem)
-        .filter((x): x is GalleryItem => x !== null)
-    ;[...bottomItems]
-        .reverse()
-        .forEach((item, i) => addToCol(item, i, rightCol))
+    if (!isMobile()) {
+        // Низ: для каждого верхнего айтема выбираем СЛУЧАЙНЫЙ ДРУГОЙ файл
+        // из того же проекта (если у проекта > 1 файла). Реверс для змейки.
+        const bottomItems = items
+            .map(pickBottomItem)
+            .filter((x): x is GalleryItem => x !== null)
+        ;[...bottomItems]
+            .reverse()
+            .forEach((item, i) => addToCol(item, i, rightCol))
 
-    // Синхронно ставим нижний в конец, чтобы при первом paint показался
-    // только правый спейсер (пусто). Чтение scrollWidth форсит layout.
-    const rWrap = rightCol.parentElement as HTMLElement
-    const initR = rWrap.scrollWidth - rWrap.clientWidth
-    if (initR > 0) rWrap.scrollLeft = initR
+        // Синхронно ставим нижний в конец, чтобы при первом paint показался
+        // только правый спейсер (пусто). Чтение scrollWidth форсит layout.
+        const rWrap = rightCol.parentElement as HTMLElement
+        const initR = rWrap.scrollWidth - rWrap.clientWidth
+        if (initR > 0) rWrap.scrollLeft = initR
+    }
 }
 
 function createMediaWrapper(item: MediaFile, index: number): HTMLDivElement {
@@ -560,6 +564,7 @@ async function openProject(
     startIndex: number = 0,
 ) {
     isViewerOpen = true
+    document.body.style.overflow = "hidden"
 
     const wrapper = $<HTMLElement>(".view-image-wrapper")
     const text = $<HTMLElement>(".view-image__text")
@@ -1027,6 +1032,7 @@ function initViewerControls() {
 
     viewImageWrapper.addEventListener("click", () => {
         isViewerOpen = false
+        document.body.style.overflow = ""
         document
             .querySelector("#top-image-description")
             ?.classList.remove("is-visible")
@@ -1252,7 +1258,7 @@ initTextRoller(
     40,
 )
 
-initSyncScroll()
+if (!isMobile()) initSyncScroll()
 initViewerControls()
 initVideoControlsButtons()
 initAbout()
