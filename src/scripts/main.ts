@@ -488,8 +488,10 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
     li.className = "index-project-row"
     li.style.transitionDelay = `${idx * 0.05}s`
 
+    const count = project.files.length
+    const countLine = count > 1 ? `<br><span class="index-count">${count} items</span>` : ""
     li.innerHTML = `
-        <div class="index-text">${idx + 1}. ${project.tag}</div>
+        <div class="index-text"><span class="index-num">${idx + 1}. </span>${project.tag}${countLine}</div>
         <div class="index-thumbnails"></div>
     `
 
