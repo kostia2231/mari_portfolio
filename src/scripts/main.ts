@@ -258,10 +258,9 @@ async function loadFromManifest() {
         projectMetaMap.set(p.tag, { services: p.services })
     })
 
-    // Preload low-res для ВСЕХ файлов: видео-постеры (убирают white-flash
-    // между вставкой <video> и первым кадром) + low-res картинок (для
-    // нижнего ряда, где случайные не-featured файлы из проекта — иначе
-    // они начинают грузиться только при появлении в DOM).
+    // Lo-res очень лёгкий (~5 KB JPEG) — грузим для ВСЕХ файлов сразу.
+    // Это даёт мгновенные миниатюры в индексе и постеры в viewer'е без
+    // ожидания сети. Эконмить тут смысла нет.
     manifest.projects.forEach((p) => {
         p.files.forEach((f) => {
             const img = new Image()
@@ -359,21 +358,18 @@ function createMediaWrapper(item: MediaFile, index: number): HTMLDivElement {
         const posterSrc = posterUrl(item)
         wrapper.innerHTML =
             `<img class="world-image__poster" src="${posterSrc}" alt="" aria-hidden="true" decoding="async">` +
-            `<video src="${videoSrcUrl(item)}" poster="${posterSrc}" autoplay muted loop playsinline preload="auto" disableremoteplayback draggable="false"></video>`
+            `<video src="${videoSrcUrl(item)}" poster="${posterSrc}" autoplay muted loop playsinline preload="metadata" disableremoteplayback draggable="false"></video>`
     } else {
         wrapper.innerHTML = `<img src="${lowResUrl(item)}" draggable="false" decoding="async">`
         const img = wrapper.querySelector<HTMLImageElement>("img")!
 
-        // Трёхстадийка low → mid → hi в фоне.
+        // В галерее показываем mid (h=800px) — этого достаточно для карточек.
+        // Hi-res грузит viewer по требованию. Экономия — несколько МБ на
+        // длинных портфолио.
         const md = new Image()
         md.src = midResUrl(item)
         md.onload = () => {
             img.src = md.src
-            const hd = new Image()
-            hd.src = hiResUrl(item)
-            hd.onload = () => {
-                img.src = hd.src
-            }
         }
     }
     return wrapper
