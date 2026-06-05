@@ -19,6 +19,7 @@
                 opacity: 0;
                 padding: 0;
                 overflow-y: auto;
+                overflow-x: hidden;
                 box-sizing: border-box;
                 transition:
                     opacity 0.3s ease,
@@ -74,6 +75,7 @@
                 padding: 5px;
                 visibility: hidden;
                 display: none;
+                white-space: nowrap;
             }
 
             .index-project-row:hover .index-text {
@@ -85,18 +87,25 @@
             .index-thumbnails {
                 display: flex;
                 flex-direction: row;
-                height: 50px;
+                flex-wrap: wrap;
                 gap: 5px;
+                min-width: 0;
             }
 
             .index-thumbnails img {
-                height: 100%;
+                height: 50px;
                 width: auto;
                 object-fit: cover;
                 display: block;
                 /* GPU-слой для пиксельной стабильности. */
                 transform: translateZ(0);
                 backface-visibility: hidden;
+            }
+            .index-thumbnails .thumb-extra {
+                display: none;
+            }
+            .index-project-row:hover .index-thumbnails .thumb-extra {
+                display: block;
             }
             /* Контейнер для пары low+hi картинки: hi плавно fade-in поверх
                low, никогда не меняем src у уже отображаемого <img>, чтобы
@@ -231,11 +240,11 @@
             }
             .left-wrapper {
                 top: 0;
+                height: 50%;
                 z-index: 1;
             }
             .right-wrapper {
-                top: 50%;
-                z-index: 1;
+                display: none;
             }
             .left,
             .right {
@@ -650,7 +659,6 @@
                 cursor: pointer;
                 filter: grayscale(1);
                 opacity: 0.2;
-                transition: opacity 0.15s ease;
                 flex-shrink: 0;
             }
             .viewer-thumbs .viewer-thumb:hover,

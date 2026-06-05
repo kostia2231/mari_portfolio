@@ -41,10 +41,6 @@ let isViewerOpen = false
 let isInfoOpen = false
 let isIndexOpen = false
 
-// Синхронный ресинк нижнего ряда. Назначается из initSyncScroll, зовётся
-// из мест где меняется ширина контента (фильтры) — до следующего paint.
-let resyncBottom: () => void = () => {}
-
 const isMobile = () => window.innerWidth < 768
 
 /* ============================================================
@@ -315,23 +311,8 @@ function preloadProjectLowRes(projectTag: string) {
    Gallery (main page two-column scrolling feed)
    ============================================================ */
 
-/**
- * Подбирает айтем для нижнего ряда: случайный ДРУГОЙ файл из того же
- * проекта. Возвращает null если у проекта только один файл — тогда
- * соответствующий слот в нижнем ряду пропускается.
- */
-function pickBottomItem(topItem: GalleryItem): GalleryItem | null {
-    const files = projectFilesMap.get(topItem.projectTag) ?? []
-    if (files.length <= 1) return null
-    const others = files.filter((f) => f.id !== topItem.id)
-    if (others.length === 0) return null
-    const random = others[Math.floor(Math.random() * others.length)]
-    return { ...random, projectTag: topItem.projectTag }
-}
-
 function renderGallery(items: GalleryItem[]) {
     const leftCol = $<HTMLElement>(".left")
-    const rightCol = $<HTMLElement>(".right")
     const topDescEl = $<HTMLElement>("#top-image-description")
 
     const addToCol = (item: GalleryItem, index: number, col: HTMLElement) => {
@@ -348,35 +329,13 @@ function renderGallery(items: GalleryItem[]) {
             topDescEl.classList.remove("is-visible")
         })
         wrapper.addEventListener("click", () => {
-            // Низ: открываем именно тот файл, что был виден (это случайный
-            // выбор из проекта). Верх: с первого файла проекта как раньше.
-            const target =
-                col === rightCol
-                    ? item
-                    : (projectFilesMap.get(item.projectTag)?.[0] ?? item)
+            const target = projectFilesMap.get(item.projectTag)?.[0] ?? item
             openProjectForFile(item.projectTag, target)
         })
     }
 
-    // Верх: все айтемы в прямом порядке.
+    // Верх: все айтемы в прямом порядке. Нижний ряд убран — не рендерим.
     items.forEach((item, i) => addToCol(item, i, leftCol))
-
-    if (!isMobile()) {
-        // Низ: для каждого верхнего айтема выбираем СЛУЧАЙНЫЙ ДРУГОЙ файл
-        // из того же проекта (если у проекта > 1 файла). Реверс для змейки.
-        const bottomItems = items
-            .map(pickBottomItem)
-            .filter((x): x is GalleryItem => x !== null)
-        ;[...bottomItems]
-            .reverse()
-            .forEach((item, i) => addToCol(item, i, rightCol))
-
-        // Синхронно ставим нижний в конец, чтобы при первом paint показался
-        // только правый спейсер (пусто). Чтение scrollWidth форсит layout.
-        const rWrap = rightCol.parentElement as HTMLElement
-        const initR = rWrap.scrollWidth - rWrap.clientWidth
-        if (initR > 0) rWrap.scrollLeft = initR
-    }
 }
 
 function createMediaWrapper(item: MediaFile, index: number): HTMLDivElement {
@@ -506,40 +465,11 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
 
     const thumbs = li.querySelector<HTMLElement>(".index-thumbnails")!
     thumbs.innerHTML = project.files
-        .slice(0, MAX_THUMBS)
-        .map((file) => {
-            // Видео: одна <img> с постером, без свапа на <video>.
-            if (file.type === "video") {
-                return `<img src="${lowResUrl(file)}" alt="" loading="lazy" decoding="async">`
-            }
-            // Фото: пара <img> — low внизу видна всегда, hi поверх fade-in
-            // на ховер. src у low НЕ трогаем → нет белого блика при свапе.
-            return `<div class="thumb-pair">
-                <img class="thumb-lo" src="${lowResUrl(file)}" alt="" loading="lazy" decoding="async">
-                <img class="thumb-hi" data-hi-src="${thumbHiUrl(file)}" alt="" decoding="async">
-            </div>`
+        .map((file, i) => {
+            const cls = i >= MAX_THUMBS ? "thumb-extra" : ""
+            return `<img class="${cls}" src="${lowResUrl(file)}" alt="" loading="lazy" decoding="async">`
         })
         .join("")
-
-    li.addEventListener(
-        "mouseenter",
-        () => {
-            thumbs
-                .querySelectorAll<HTMLImageElement>(".thumb-hi[data-hi-src]")
-                .forEach((hi) => {
-                    const src = hi.dataset.hiSrc
-                    if (!src) return
-                    hi.removeAttribute("data-hi-src")
-                    hi.addEventListener(
-                        "load",
-                        () => hi.classList.add("is-ready"),
-                        { once: true },
-                    )
-                    hi.src = src
-                })
-        },
-        { once: true },
-    )
 
     return li
 }
@@ -725,13 +655,14 @@ function renderViewerFile(file: MediaFile) {
         controls.style.display = "none"
 
         const low = lowResUrl(file)
+        const mid = midResUrl(file)
         const hi = hiResUrl(file)
         const existingVid = document.getElementById("viewer-main-vid")
         if (existingVid) existingVid.remove()
 
         // Hi уже в кеше? (prefetch соседей в updateViewerFrame) — ставим hi
-        // напрямую, пропуская low: иначе при next/prev видно мигание
-        // предыдущей картинки пока грузится low → flash на low → swap на hi.
+        // напрямую, пропуская lo: иначе при next/prev видно мигание
+        // предыдущей картинки пока грузится lo → flash на lo → swap на hi.
         const hd = new Image()
         hd.src = hi
         const hiCached = hd.complete
@@ -744,11 +675,23 @@ function renderViewerFile(file: MediaFile) {
             img = document.getElementById("viewer-main-img") as HTMLImageElement
         } else if (!img.src.includes(file.id)) {
             img.src = hiCached ? hi : low
+        } else if (hiCached && img.src.includes("-lo")) {
+            // Тот же файл, но текущий src — lo (например openProject его так
+            // создал), а hi уже прогрет (галерея предзагружала). Апгрейдим.
+            img.src = hi
         }
 
         if (!hiCached) {
+            // Параллельно: mid как промежуточный апгрейд (если hi медленный
+            // или 404 — юзер не залипает на lo). Цепочка: lo → mid → hi.
+            const md = new Image()
+            md.src = mid
+            md.onload = () => {
+                if (img && img.src.includes(file.id) && img.src.includes("-lo")) {
+                    img.src = mid
+                }
+            }
             hd.onload = () => {
-                // Свапаем только если рендерится тот же файл (юзер мог сменить).
                 if (img && img.src.includes(file.id)) {
                     img.src = hi
                 }
@@ -895,83 +838,28 @@ function formatTime(t: number): string {
 
 function initSyncScroll() {
     const lWrap = $<HTMLElement>(".left-wrapper")
-    const rWrap = $<HTMLElement>(".right-wrapper")
-    const lInner = $<HTMLElement>(".left")
-    const rInner = $<HTMLElement>(".right")
 
-    let maxL = 0,
-        maxR = 0
-    // Tracks the last value we set programmatically to suppress feedback
-    // scroll events from our own scrollLeft assignments.
-    let lastSetL = -1,
-        lastSetR = -1
-
-    // Helpers для инверсного маппинга. Верхний идёт 0 → maxL, нижний
-    // одновременно идёт maxR → 0 (контент в обратном порядке + спейсер
-    // справа: при scrollLeft = maxR виден только пустой спейсер).
-    const topToBot = (top: number) =>
-        maxL > 0 ? Math.round(maxR - (top / maxL) * maxR) : maxR
-    const botToTop = (bot: number) =>
-        maxR > 0 ? Math.round(((maxR - bot) / maxR) * maxL) : 0
-
-    // Синхронный пересчёт maxR/maxL + позиции нижнего. Доступен снаружи
-    // (см. resyncBottom внизу) — фильтры дёргают его сразу после смены
-    // классов, чтобы нижний не показал старую позицию на один кадр.
-    const doResync = () => {
+    let maxL = 0
+    const recompute = () => {
         maxL = Math.max(0, lWrap.scrollWidth - lWrap.clientWidth)
-        maxR = Math.max(0, rWrap.scrollWidth - rWrap.clientWidth)
-        if (maxR > 0) {
-            const next = topToBot(lWrap.scrollLeft)
-            lastSetR = next
-            rWrap.scrollLeft = next
-        }
     }
-    resyncBottom = doResync
-
-    let recomputeScheduled = false
-    const recomputeMaxes = () => {
-        if (recomputeScheduled) return
-        recomputeScheduled = true
-        requestAnimationFrame(() => {
-            recomputeScheduled = false
-            maxL = Math.max(0, lWrap.scrollWidth - lWrap.clientWidth)
-            maxR = Math.max(0, rWrap.scrollWidth - rWrap.clientWidth)
-            // Пересинхронизируем нижний под текущее положение верхнего.
-            // Картинки догружаются → maxR/maxL меняются → без этого
-            // нижний дрейфует относительно верхнего.
-            if (maxR > 0) {
-                const next = topToBot(lWrap.scrollLeft)
-                lastSetR = next
-                rWrap.scrollLeft = next
-            }
-        })
-    }
-    recomputeMaxes()
-    window.addEventListener("resize", recomputeMaxes)
+    recompute()
+    window.addEventListener("resize", recompute)
     if (typeof ResizeObserver !== "undefined") {
-        const ro = new ResizeObserver(recomputeMaxes)
-        ro.observe(lInner)
-        ro.observe(rInner)
+        const ro = new ResizeObserver(recompute)
+        ro.observe(lWrap.firstElementChild ?? lWrap)
     }
 
-    // Wheel: верх вперёд → низ назад (инверсия).
-    // rAF-батчинг: множество wheel-событий за кадр коалесцируются в один
-    // апдейт. Без этого на трекпаде 60–120 wheel/с давали 2–4 paint/событие.
+    // Wheel: вертикальное колесо → горизонтальный скролл единственного ряда.
+    // rAF-батчинг: коалесцируем wheel-события за кадр в один scrollLeft write.
     let pendingDelta = 0
     let wheelScheduled = false
     const flushWheel = () => {
         wheelScheduled = false
         if (pendingDelta === 0) return
-        const newL = Math.max(
-            0,
-            Math.min(maxL, lWrap.scrollLeft + pendingDelta),
-        )
+        const newL = Math.max(0, Math.min(maxL, lWrap.scrollLeft + pendingDelta))
         pendingDelta = 0
-        const newR = topToBot(newL)
-        lastSetL = newL
-        lastSetR = newR
         lWrap.scrollLeft = newL
-        rWrap.scrollLeft = newR
     }
     const worldEl = document.getElementById("world")
     ;(worldEl ?? document.documentElement).addEventListener(
@@ -987,45 +875,6 @@ function initSyncScroll() {
             }
         },
         { passive: false },
-    )
-
-    // Native swipe: инверсия в обе стороны. rAF-batch чтобы не форсить
-    // layout на каждом scroll-событии (60–120/с на трекпаде).
-    let syncLScheduled = false
-    let syncRScheduled = false
-
-    lWrap.addEventListener(
-        "scroll",
-        () => {
-            if (syncLScheduled) return
-            syncLScheduled = true
-            requestAnimationFrame(() => {
-                syncLScheduled = false
-                const pos = lWrap.scrollLeft
-                if (pos === lastSetL) return
-                const next = topToBot(pos)
-                lastSetR = next
-                rWrap.scrollLeft = next
-            })
-        },
-        { passive: true },
-    )
-
-    rWrap.addEventListener(
-        "scroll",
-        () => {
-            if (syncRScheduled) return
-            syncRScheduled = true
-            requestAnimationFrame(() => {
-                syncRScheduled = false
-                const pos = rWrap.scrollLeft
-                if (pos === lastSetR) return
-                const next = botToTop(pos)
-                lastSetL = next
-                lWrap.scrollLeft = next
-            })
-        },
-        { passive: true },
     )
 }
 
@@ -1262,10 +1111,6 @@ function initFilters() {
             const show = !current || el.dataset.type === current
             el.classList.toggle("is-filtered-out", !show)
         })
-
-        // Ширина контента поменялась — сразу пересчитываем maxR и ставим
-        // нижний на свой край. Иначе один кадр виден старый scrollLeft.
-        resyncBottom()
     }
 
     photoBtn.addEventListener("click", () => apply("image"))
