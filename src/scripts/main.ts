@@ -38,6 +38,7 @@ let currentProjectFiles: MediaFile[] = []
 let currentViewerIndex = 0
 let progressLoopId = 0
 let isViewerOpen = false
+let isViewerOpening = false
 let isInfoOpen = false
 let isIndexOpen = false
 
@@ -491,6 +492,8 @@ async function openProject(
     startIndex: number = 0,
 ) {
     isViewerOpen = true
+    isViewerOpening = true
+    setTimeout(() => { isViewerOpening = false }, 650)
     document.body.style.overflow = "hidden"
 
     const wrapper = $<HTMLElement>(".view-image-wrapper")
@@ -668,10 +671,10 @@ function renderViewerFile(file: MediaFile) {
             img.src = low
         }
 
-        // Удержание на lo минимум 300 мс: даже если mid/hi из кеша моментально,
-        // пользователь видит короткий "lo flash" — переход чувствуется ровнее.
+        // Удержание на lo: 300 мс при next/prev, 700 мс при открытии (чтобы
+        // свап img.src не дёргался во время slide-up анимации виуйера 600ms).
         const loSetAt = performance.now()
-        const MIN_LO_MS = 300
+        const MIN_LO_MS = isViewerOpening ? 700 : 300
         const delayedSwap = (cb: () => void) => {
             const elapsed = performance.now() - loSetAt
             if (elapsed >= MIN_LO_MS) cb()
