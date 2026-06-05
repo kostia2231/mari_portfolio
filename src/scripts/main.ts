@@ -39,6 +39,7 @@ let currentViewerIndex = 0
 let progressLoopId = 0
 let isViewerOpen = false
 let isInfoOpen = false
+let isIndexOpen = false
 
 // Синхронный ресинк нижнего ряда. Назначается из initSyncScroll, зовётся
 // из мест где меняется ширина контента (фильтры) — до следующего paint.
@@ -442,7 +443,7 @@ function setupVideoVisibilityObserver() {
                 }
             })
         },
-        { root: null, rootMargin: "0px 200px", threshold: 0 },
+        { root: null, rootMargin: isMobile() ? "200px 0px" : "0px 200px", threshold: 0 },
     )
     videos.forEach((v) => videoVisibilityObserver!.observe(v))
 }
@@ -967,7 +968,7 @@ function initSyncScroll() {
     ;(worldEl ?? document.documentElement).addEventListener(
         "wheel",
         (e: WheelEvent) => {
-            if (isViewerOpen || isInfoOpen) return
+            if (isViewerOpen || isInfoOpen || isIndexOpen) return
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
             e.preventDefault()
             pendingDelta += e.deltaY
@@ -979,15 +980,24 @@ function initSyncScroll() {
         { passive: false },
     )
 
-    // Native swipe: инверсия в обе стороны.
+    // Native swipe: инверсия в обе стороны. rAF-batch чтобы не форсить
+    // layout на каждом scroll-событии (60–120/с на трекпаде).
+    let syncLScheduled = false
+    let syncRScheduled = false
+
     lWrap.addEventListener(
         "scroll",
         () => {
-            const pos = lWrap.scrollLeft
-            if (pos === lastSetL) return
-            const next = topToBot(pos)
-            lastSetR = next
-            rWrap.scrollLeft = next
+            if (syncLScheduled) return
+            syncLScheduled = true
+            requestAnimationFrame(() => {
+                syncLScheduled = false
+                const pos = lWrap.scrollLeft
+                if (pos === lastSetL) return
+                const next = topToBot(pos)
+                lastSetR = next
+                rWrap.scrollLeft = next
+            })
         },
         { passive: true },
     )
@@ -995,11 +1005,16 @@ function initSyncScroll() {
     rWrap.addEventListener(
         "scroll",
         () => {
-            const pos = rWrap.scrollLeft
-            if (pos === lastSetR) return
-            const next = botToTop(pos)
-            lastSetL = next
-            lWrap.scrollLeft = next
+            if (syncRScheduled) return
+            syncRScheduled = true
+            requestAnimationFrame(() => {
+                syncRScheduled = false
+                const pos = rWrap.scrollLeft
+                if (pos === lastSetR) return
+                const next = botToTop(pos)
+                lastSetL = next
+                lWrap.scrollLeft = next
+            })
         },
         { passive: true },
     )
@@ -1190,11 +1205,13 @@ function initIndexButton() {
     btn.addEventListener("click", () => {
         const isOpen = wrap.classList.contains("is-visible")
         if (isOpen) {
+            isIndexOpen = false
             wrap.classList.remove("is-visible")
             btn.classList.remove("is-active")
             gridOverlay.classList.remove("is-visible")
             playVisibleWorldVideos()
         } else {
+            isIndexOpen = true
             wrap.classList.add("is-visible")
             btn.classList.add("is-active")
             gridOverlay.classList.add("is-visible")
@@ -1206,6 +1223,7 @@ function initIndexButton() {
     })
 
     wrap.addEventListener("click", () => {
+        isIndexOpen = false
         wrap.classList.remove("is-visible")
         btn.classList.remove("is-active")
         gridOverlay.classList.remove("is-visible")

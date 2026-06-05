@@ -299,8 +299,6 @@
             .world-image > video {
                 height: 100%;
                 width: auto;
-                transform: translateZ(0);
-                backface-visibility: hidden;
             }
             /* Обрезаем 1px по краю видео — прячет edge anti-aliasing от GPU
                и encoding-артефакты H.264 на macroblock-границах, которые
@@ -883,6 +881,8 @@
                     opacity: 1 !important;
                     transition: none !important;
                     will-change: auto !important;
+                    content-visibility: auto;
+                    contain-intrinsic-size: auto 300px;
                 }
                 .world-image > img,
                 .world-image > video {
