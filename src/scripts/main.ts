@@ -729,22 +729,29 @@ function renderViewerFile(file: MediaFile) {
         const existingVid = document.getElementById("viewer-main-vid")
         if (existingVid) existingVid.remove()
 
+        // Hi уже в кеше? (prefetch соседей в updateViewerFrame) — ставим hi
+        // напрямую, пропуская low: иначе при next/prev видно мигание
+        // предыдущей картинки пока грузится low → flash на low → swap на hi.
+        const hd = new Image()
+        hd.src = hi
+        const hiCached = hd.complete
+
         let img = document.getElementById(
             "viewer-main-img",
         ) as HTMLImageElement | null
         if (!img) {
-            stage.innerHTML = `<img id="viewer-main-img" src="${low}" decoding="async">`
+            stage.innerHTML = `<img id="viewer-main-img" src="${hiCached ? hi : low}" decoding="async">`
             img = document.getElementById("viewer-main-img") as HTMLImageElement
         } else if (!img.src.includes(file.id)) {
-            img.src = low
+            img.src = hiCached ? hi : low
         }
 
-        const hd = new Image()
-        hd.src = hi
-        hd.onload = () => {
-            // Свапаем только если рендерится тот же файл (юзер мог сменить).
-            if (img && img.src.includes(file.id)) {
-                img.src = hi
+        if (!hiCached) {
+            hd.onload = () => {
+                // Свапаем только если рендерится тот же файл (юзер мог сменить).
+                if (img && img.src.includes(file.id)) {
+                    img.src = hi
+                }
             }
         }
     }
@@ -797,11 +804,13 @@ function buildThumbStrip() {
             currentViewerIndex = idx
             updateViewerFrame()
         })
-        el.addEventListener("mouseenter", (e) => {
-            e.stopPropagation()
-            if (idx === currentViewerIndex) return
-            renderViewerFile(currentProjectFiles[idx])
-        })
+        if (!isMobile()) {
+            el.addEventListener("mouseenter", (e) => {
+                e.stopPropagation()
+                if (idx === currentViewerIndex) return
+                renderViewerFile(currentProjectFiles[idx])
+            })
+        }
     })
 
     updateThumbStripActive(currentViewerIndex)
@@ -1040,10 +1049,12 @@ function initViewerControls() {
     // Уход курсора со стрипа возвращает кадр на активный индекс
     // (отменяет hover-превью). Bind один раз — иначе при каждом
     // buildThumbStrip накапливались бы дубликаты.
-    thumbStrip?.addEventListener("mouseleave", () => {
-        const file = currentProjectFiles[currentViewerIndex]
-        if (file) renderViewerFile(file)
-    })
+    if (!isMobile()) {
+        thumbStrip?.addEventListener("mouseleave", () => {
+            const file = currentProjectFiles[currentViewerIndex]
+            if (file) renderViewerFile(file)
+        })
+    }
 
     viewImageWrapper.addEventListener("click", () => {
         isViewerOpen = false
