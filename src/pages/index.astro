@@ -821,6 +821,9 @@
                 .world-image:hover {
                     z-index: 1;
                 }
+                .viewer-thumbs .viewer-thumb {
+                    transition: none;
+                }
                 .viewer-thumbs .viewer-thumb:hover {
                     opacity: 0.2;
                     filter: grayscale(1);
@@ -885,6 +888,9 @@
                 .world-image > video {
                     width: 100%;
                     height: auto;
+                    transform: none;
+                    backface-visibility: visible;
+                    will-change: auto;
                 }
                 .view-image-wrapper {
                     position: fixed;

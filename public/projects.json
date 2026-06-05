@@ -507,12 +507,6 @@
                     "w": 2075,
                     "h": 2594,
                     "featured": true
-                },
-                {
-                    "type": "image",
-                    "id": "projects/arina/02",
-                    "w": 2075,
-                    "h": 2594
                 }
             ],
             "services": "Styling"
@@ -586,41 +580,6 @@
                     "id": "projects/b-w-personal-project/11",
                     "w": 9339,
                     "h": 6226
-                }
-            ]
-        },
-        {
-            "tag": "Backstage Series 1",
-            "files": [
-                {
-                    "type": "video",
-                    "id": "projects/backstage-series-1/video-01",
-                    "w": 1920,
-                    "h": 1080
-                }
-            ]
-        },
-        {
-            "tag": "Backstage Series 2",
-            "files": [
-                {
-                    "type": "video",
-                    "id": "projects/backstage-series-2/video-01",
-                    "w": 1920,
-                    "h": 1080,
-                    "featured": true
-                }
-            ]
-        },
-        {
-            "tag": "Backstage Series 3",
-            "files": [
-                {
-                    "type": "video",
-                    "id": "projects/backstage-series-3/video-01",
-                    "w": 1920,
-                    "h": 1080,
-                    "featured": true
                 }
             ]
         },
@@ -1074,12 +1033,6 @@
                     "w": 2206,
                     "h": 2757,
                     "featured": true
-                },
-                {
-                    "type": "image",
-                    "id": "projects/rtm/02",
-                    "w": 2206,
-                    "h": 2757
                 }
             ],
             "services": "Production, Styling"

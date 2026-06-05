@@ -22,12 +22,12 @@ export function lowResUrl(file: MediaFile): string {
 
 /** Mid-resolution working quality (h=800). */
 export function midResUrl(file: MediaFile): string {
-    return join(file.id, "-mid.jpg");
+    return join(file.id, "-mid.webp");
 }
 
 /** Full quality hi-res image. */
 export function hiResUrl(file: MediaFile): string {
-    return join(file.id, ".jpg");
+    return join(file.id, ".webp");
 }
 
 /** Source MP4 for video files (viewer-grade). */
@@ -52,5 +52,5 @@ export function posterUrl(file: MediaFile): string {
  */
 export function thumbHiUrl(file: MediaFile): string {
     if (file.type === "video") return join(file.id, "-lo.jpg");
-    return join(file.id, "-mid.jpg");
+    return join(file.id, "-mid.webp");
 }

@@ -72,8 +72,8 @@ async function processImage(localPath, slug, baseName) {
     const variants = await makeImageVariants(buf);
     const base = `projects/${slug}/${baseName}`;
     await uploadIfNeeded(`${base}-lo.jpg`, variants.lo);
-    await uploadIfNeeded(`${base}-mid.jpg`, variants.mid);
-    await uploadIfNeeded(`${base}.jpg`, variants.hi);
+    await uploadIfNeeded(`${base}-mid.webp`, variants.mid);
+    await uploadIfNeeded(`${base}.webp`, variants.hi);
     return {
         type: "image",
         id: base,
