@@ -656,43 +656,47 @@ function renderViewerFile(file: MediaFile) {
         const existingVid = document.getElementById("viewer-main-vid")
         if (existingVid) existingVid.remove()
 
-        // Hi уже в кеше? (prefetch соседей в updateViewerFrame) — ставим hi
-        // напрямую, пропуская lo: иначе при next/prev видно мигание
-        // предыдущей картинки пока грузится lo → flash на lo → swap на hi.
-        const hd = new Image()
-        hd.src = hi
-        const hiCached = hd.complete
-
+        // Всегда показываем lo сначала, потом апгрейдим до mid/hi. Даёт
+        // консистентный feel перехода, даже если hi уже в кеше.
         let img = document.getElementById(
             "viewer-main-img",
         ) as HTMLImageElement | null
         if (!img) {
-            stage.innerHTML = `<img id="viewer-main-img" src="${hiCached ? hi : low}" decoding="async">`
+            stage.innerHTML = `<img id="viewer-main-img" src="${low}" decoding="async">`
             img = document.getElementById("viewer-main-img") as HTMLImageElement
-        } else if (!img.src.includes(file.id)) {
-            img.src = hiCached ? hi : low
-        } else if (hiCached && img.src.includes("-lo")) {
-            // Тот же файл, но текущий src — lo (например openProject его так
-            // создал), а hi уже прогрет (галерея предзагружала). Апгрейдим.
-            img.src = hi
+        } else if (!img.src.includes(file.id) || !img.src.includes("-lo")) {
+            img.src = low
         }
 
-        if (!hiCached) {
-            // Параллельно: mid как промежуточный апгрейд (если hi медленный
-            // или 404 — юзер не залипает на lo). Цепочка: lo → mid → hi.
-            const md = new Image()
-            md.src = mid
-            md.onload = () => {
+        // Удержание на lo минимум 300 мс: даже если mid/hi из кеша моментально,
+        // пользователь видит короткий "lo flash" — переход чувствуется ровнее.
+        const loSetAt = performance.now()
+        const MIN_LO_MS = 300
+        const delayedSwap = (cb: () => void) => {
+            const elapsed = performance.now() - loSetAt
+            if (elapsed >= MIN_LO_MS) cb()
+            else setTimeout(cb, MIN_LO_MS - elapsed)
+        }
+
+        // Цепочка lo → mid → hi. onload ставится ДО src, иначе для cached
+        // картинок load событие пропустится.
+        const md = new Image()
+        md.onload = () =>
+            delayedSwap(() => {
                 if (img && img.src.includes(file.id) && img.src.includes("-lo")) {
                     img.src = mid
                 }
-            }
-            hd.onload = () => {
+            })
+        md.src = mid
+
+        const hd = new Image()
+        hd.onload = () =>
+            delayedSwap(() => {
                 if (img && img.src.includes(file.id)) {
                     img.src = hi
                 }
-            }
-        }
+            })
+        hd.src = hi
     }
 
     fitViewerMedia(file)
