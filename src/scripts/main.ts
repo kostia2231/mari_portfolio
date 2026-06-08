@@ -444,6 +444,10 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
     const li = document.createElement("li")
     li.className = "index-project-row"
     li.style.transitionDelay = `${idx * 0.05}s`
+    const hasImage = project.files.some((f) => f.type === "image")
+    const hasVideo = project.files.some((f) => f.type === "video")
+    li.dataset.hasImage = hasImage ? "1" : "0"
+    li.dataset.hasVideo = hasVideo ? "1" : "0"
 
     const count = project.files.length
     const countLine = count > 1 ? `<br><span class="index-count">${count} items</span>` : ""
@@ -1114,6 +1118,23 @@ function initFilters() {
             const show = !current || el.dataset.type === current
             el.classList.toggle("is-filtered-out", !show)
         })
+
+        document.querySelectorAll<HTMLElement>(".index-project-row").forEach((el) => {
+            const show =
+                !current ||
+                (current === "image" && el.dataset.hasImage === "1") ||
+                (current === "video" && el.dataset.hasVideo === "1")
+            el.classList.toggle("is-filtered-out", !show)
+        })
+
+        const lWrap = document.querySelector<HTMLElement>(".left-wrapper")
+        if (lWrap) {
+            lWrap.scrollLeft = 0
+            lWrap.scrollTop = 0
+        }
+        const idxWrap = document.querySelector<HTMLElement>(".index-wrapper")
+        if (idxWrap) idxWrap.scrollTop = 0
+        window.scrollTo(0, 0)
     }
 
     photoBtn.addEventListener("click", () => apply("image"))
