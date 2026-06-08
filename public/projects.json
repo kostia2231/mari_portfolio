@@ -1093,177 +1093,237 @@
             "services": "Art Direction, Styling"
         },
         {
-            "tag": "Solar Silver",
+            "tag": "Solar Silver FW24",
             "files": [
                 {
                     "type": "image",
-                    "id": "projects/solar-silver/01",
-                    "w": 1920,
-                    "h": 1280,
-                    "featured": true
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/02",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/03",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/04",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/05",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/06",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/07",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/08",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/09",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/10",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/11",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/12",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/13",
-                    "w": 1920,
-                    "h": 1281
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/14",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/15",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver/16",
-                    "w": 1920,
-                    "h": 2880
-                }
-            ],
-            "services": "Art Direction, Styling"
-        },
-        {
-            "tag": "Solar Silver 23",
-            "files": [
-                {
-                    "type": "image",
-                    "id": "projects/solar-silver-23/01",
+                    "id": "projects/solar-silver-fw24/01",
                     "w": 1920,
                     "h": 2880,
                     "featured": true
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/02",
+                    "id": "projects/solar-silver-fw24/02",
                     "w": 1920,
                     "h": 1280
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/03",
+                    "id": "projects/solar-silver-fw24/03",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/04",
+                    "id": "projects/solar-silver-fw24/04",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/05",
+                    "id": "projects/solar-silver-fw24/05",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/06",
+                    "id": "projects/solar-silver-fw24/06",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/07",
+                    "id": "projects/solar-silver-fw24/07",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/08",
+                    "id": "projects/solar-silver-fw24/08",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/09",
+                    "id": "projects/solar-silver-fw24/09",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/10",
+                    "id": "projects/solar-silver-fw24/10",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/solar-silver-23/11",
+                    "id": "projects/solar-silver-fw24/11",
                     "w": 1920,
                     "h": 1280
+                }
+            ],
+            "services": "Art Direction, Styling"
+        },
+        {
+            "tag": "Solar Silver SS23",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/01",
+                    "w": 1080,
+                    "h": 1350,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/02",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/03",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/04",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/05",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/06",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/07",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/08",
+                    "w": 1080,
+                    "h": 1350
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss23/09",
+                    "w": 1080,
+                    "h": 1350
+                }
+            ]
+        },
+        {
+            "tag": "Solar Silver SS25",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/01",
+                    "w": 1920,
+                    "h": 1280,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/02",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/03",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/04",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/05",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/06",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/07",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/08",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/09",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/10",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/11",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/12",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/13",
+                    "w": 1920,
+                    "h": 1281
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/14",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/15",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/solar-silver-ss25/16",
+                    "w": 1920,
+                    "h": 2880
                 }
             ],
             "services": "Art Direction, Styling"
