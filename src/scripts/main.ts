@@ -253,6 +253,15 @@ async function loadFromManifest() {
         return ap - bp
     })
 
+    // "About" project — its media goes into the About panel, not on
+    // main/index. Match by tag (case-insensitive). Strip first so it's
+    // invisible to all other consumers (gallery, index, preload, maps).
+    const aboutIdx = manifest.projects.findIndex(
+        (p) => p.tag.trim().toLowerCase() === "about",
+    )
+    const aboutProject =
+        aboutIdx >= 0 ? manifest.projects.splice(aboutIdx, 1)[0] : null
+
     // Populate project files map for fast lookups (preload, click → first file).
     manifest.projects.forEach((p) => {
         projectFilesMap.set(p.tag, p.files)
@@ -276,6 +285,8 @@ async function loadFromManifest() {
         const items = featured.length > 0 ? featured : p.files.slice(0, 1)
         return items.map((f) => ({ ...f, projectTag: p.tag }))
     })
+
+    renderAbout(aboutProject?.files ?? [])
 
     if (galleryItems.length === 0) {
         isAssetsLoaded = true
@@ -399,7 +410,11 @@ function setupVideoVisibilityObserver() {
                 }
             })
         },
-        { root: null, rootMargin: isMobile() ? "200px 0px" : "0px 200px", threshold: 0 },
+        {
+            root: null,
+            rootMargin: isMobile() ? "200px 0px" : "0px 200px",
+            threshold: 0,
+        },
     )
     videos.forEach((v) => videoVisibilityObserver!.observe(v))
 }
@@ -450,7 +465,8 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
     li.dataset.hasVideo = hasVideo ? "1" : "0"
 
     const count = project.files.length
-    const countLine = count > 1 ? `<br><span class="index-count">${count} items</span>` : ""
+    const countLine =
+        count > 1 ? `<br><span class="index-count">${count} items</span>` : ""
     li.innerHTML = `
         <div class="index-text"><span class="index-num">${idx + 1}. </span>${project.tag}${countLine}</div>
         <div class="index-thumbnails"></div>
@@ -497,7 +513,9 @@ async function openProject(
 ) {
     isViewerOpen = true
     isViewerOpening = true
-    setTimeout(() => { isViewerOpening = false }, 650)
+    setTimeout(() => {
+        isViewerOpening = false
+    }, 650)
     document.body.style.overflow = "hidden"
 
     const wrapper = $<HTMLElement>(".view-image-wrapper")
@@ -690,7 +708,11 @@ function renderViewerFile(file: MediaFile) {
         const md = new Image()
         md.onload = () =>
             delayedSwap(() => {
-                if (img && img.src.includes(file.id) && img.src.includes("-lo")) {
+                if (
+                    img &&
+                    img.src.includes(file.id) &&
+                    img.src.includes("-lo")
+                ) {
                     img.src = mid
                 }
             })
@@ -864,7 +886,10 @@ function initSyncScroll() {
     const flushWheel = () => {
         wheelScheduled = false
         if (pendingDelta === 0) return
-        const newL = Math.max(0, Math.min(maxL, lWrap.scrollLeft + pendingDelta))
+        const newL = Math.max(
+            0,
+            Math.min(maxL, lWrap.scrollLeft + pendingDelta),
+        )
         pendingDelta = 0
         lWrap.scrollLeft = newL
     }
@@ -1010,6 +1035,74 @@ function initVideoControlsButtons() {
    About panel (canvas radial gradient + open/close)
    ============================================================ */
 
+function renderAbout(files: MediaFile[]) {
+    const info = document.getElementById("information")
+    if (!info) return
+    const images = files.filter((f) => f.type === "image")
+
+    // One tile per image (min 6 placeholders if no images yet).
+    // Parallax depth grows with index — deeper tiles drift faster.
+    const MIN_TILES = 6
+    const PARALLAX_BASE = 0.15
+    const PARALLAX_STEP = 0.05
+    const PARALLAX_MAX = 0.6
+    const tileCount = Math.max(MIN_TILES, images.length)
+
+    const container = document.createElement("div")
+    container.className = "about-images"
+
+    for (let i = 0; i < tileCount; i++) {
+        const tile = document.createElement("div")
+        tile.className = "about-tile"
+        const depth = Math.min(PARALLAX_MAX, PARALLAX_BASE + i * PARALLAX_STEP)
+        tile.dataset.parallax = String(depth)
+
+        const file = images[i]
+        if (file) {
+            const img = document.createElement("img")
+            img.src = midResUrl(file)
+            img.loading = "lazy"
+            img.decoding = "async"
+            tile.appendChild(img)
+        }
+        container.appendChild(tile)
+    }
+
+    info.insertBefore(container, info.firstChild)
+
+    const tiles = Array.from(
+        container.querySelectorAll<HTMLElement>(".about-tile"),
+    )
+
+    const update = () => {
+        const scrollTop = info.scrollTop
+        const FADE_BAND = 200 // px from viewport top where tile shrinks to 0
+        for (const tile of tiles) {
+            const f = parseFloat(tile.dataset.parallax || "0.2")
+            const ty = -scrollTop * f
+            const tileCenter =
+                tile.offsetTop - scrollTop + tile.offsetHeight / 2 + ty
+            // tile full size while well below top; shrinks to 0 as its
+            // center approaches viewport top
+            const scale = Math.min(1, Math.max(0, tileCenter / FADE_BAND))
+            tile.style.transform = `translate3d(0, ${ty}px, 0) scale(${scale})`
+        }
+    }
+
+    let ticking = false
+    const onScroll = () => {
+        if (ticking) return
+        ticking = true
+        requestAnimationFrame(() => {
+            update()
+            ticking = false
+        })
+    }
+    info.addEventListener("scroll", onScroll, { passive: true })
+    // initial pass so tiles get correct scale before any scroll
+    requestAnimationFrame(update)
+}
+
 function initAbout() {
     const infoCanvas = document.getElementById(
         "info-background",
@@ -1044,6 +1137,7 @@ function initAbout() {
         isInfoOpen = false
     }
     infoBtn.onclick = () => {
+        infoBlock.scrollTop = 0
         infoWrap.classList.add("is-visible")
         isInfoOpen = true
     }
@@ -1079,11 +1173,14 @@ function initIndexButton() {
             playVisibleWorldVideos()
         } else {
             isIndexOpen = true
+            wrap.scrollTop = 0
             wrap.classList.add("is-visible")
             btn.classList.add("is-active")
             gridOverlay.classList.add("is-visible")
             pauseAllWorldVideos()
-            wrap.querySelectorAll<HTMLImageElement>("img[loading='lazy']").forEach((img) => {
+            wrap.querySelectorAll<HTMLImageElement>(
+                "img[loading='lazy']",
+            ).forEach((img) => {
                 img.loading = "eager"
             })
         }
@@ -1119,13 +1216,15 @@ function initFilters() {
             el.classList.toggle("is-filtered-out", !show)
         })
 
-        document.querySelectorAll<HTMLElement>(".index-project-row").forEach((el) => {
-            const show =
-                !current ||
-                (current === "image" && el.dataset.hasImage === "1") ||
-                (current === "video" && el.dataset.hasVideo === "1")
-            el.classList.toggle("is-filtered-out", !show)
-        })
+        document
+            .querySelectorAll<HTMLElement>(".index-project-row")
+            .forEach((el) => {
+                const show =
+                    !current ||
+                    (current === "image" && el.dataset.hasImage === "1") ||
+                    (current === "video" && el.dataset.hasVideo === "1")
+                el.classList.toggle("is-filtered-out", !show)
+            })
 
         const lWrap = document.querySelector<HTMLElement>(".left-wrapper")
         if (lWrap) {

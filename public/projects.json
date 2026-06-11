@@ -348,6 +348,70 @@
             "position": 6
         },
         {
+            "tag": "10 Magazine DE (Backstage)",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/10-magazine-de-backstage/video-01",
+                    "w": 3840,
+                    "h": 2160
+                },
+                {
+                    "type": "image",
+                    "id": "projects/10-magazine-de-backstage/01",
+                    "w": 3024,
+                    "h": 4032
+                },
+                {
+                    "type": "image",
+                    "id": "projects/10-magazine-de-backstage/02",
+                    "w": 2268,
+                    "h": 4032
+                },
+                {
+                    "type": "image",
+                    "id": "projects/10-magazine-de-backstage/03",
+                    "w": 5712,
+                    "h": 4284
+                },
+                {
+                    "type": "image",
+                    "id": "projects/10-magazine-de-backstage/04",
+                    "w": 4032,
+                    "h": 2268
+                }
+            ]
+        },
+        {
+            "tag": "About",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/about/01",
+                    "w": 6000,
+                    "h": 4000
+                },
+                {
+                    "type": "image",
+                    "id": "projects/about/02",
+                    "w": 4032,
+                    "h": 3024
+                },
+                {
+                    "type": "image",
+                    "id": "projects/about/03",
+                    "w": 2299,
+                    "h": 2895
+                },
+                {
+                    "type": "image",
+                    "id": "projects/about/04",
+                    "w": 3024,
+                    "h": 3024
+                }
+            ]
+        },
+        {
             "tag": "Aisenberg FW24",
             "files": [
                 {

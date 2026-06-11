@@ -488,6 +488,36 @@
                 box-sizing: border-box;
                 overscroll-behavior: contain;
             }
+            .about-images {
+                position: absolute;
+                top: 50%;
+                padding-top: 5vh;
+                left: 5px;
+                right: 5px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                pointer-events: none;
+                z-index: 2;
+            }
+            .about-images .about-tile {
+                background-color: black;
+                height: 50vh;
+                will-change: transform;
+                transform-origin: 50% 0;
+            }
+            .about-images .about-tile:nth-child(odd) {
+                align-self: flex-start;
+            }
+            .about-images .about-tile:nth-child(even) {
+                align-self: flex-end;
+            }
+            .about-images .about-tile img {
+                width: 100%;
+                height: 100%;
+                display: block;
+                object-fit: cover;
+            }
             .information-wrapper {
                 position: fixed;
                 inset: 0;
