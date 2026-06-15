@@ -499,9 +499,9 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
                 // специально для миниатюр. preload="metadata" чтобы был
                 // первый кадр без полной загрузки. autoplay+muted+loop —
                 // микро-видео крутятся в индексе как gif'ки.
-                return `<video class="${cls}" src="${thumbVideoUrl(file)}" poster="${lowResUrl(file)}" muted loop autoplay playsinline preload="metadata" disableremoteplayback></video>`
+                return `<video class="${cls}" data-type="video" src="${thumbVideoUrl(file)}" poster="${lowResUrl(file)}" muted loop autoplay playsinline preload="metadata" disableremoteplayback></video>`
             }
-            return `<img class="${cls}" src="${lowResUrl(file)}" alt="" loading="lazy" decoding="async">`
+            return `<img class="${cls}" data-type="image" src="${lowResUrl(file)}" alt="" loading="lazy" decoding="async">`
         })
         .join("")
 
@@ -1413,6 +1413,16 @@ function initFilters() {
                     !current ||
                     (current === "image" && el.dataset.hasImage === "1") ||
                     (current === "video" && el.dataset.hasVideo === "1")
+                el.classList.toggle("is-filtered-out", !show)
+            })
+
+        // Внутри каждой строки индекса оставляем только thumbs того типа,
+        // что и активный фильтр. Без этого микс-проекты показывают и фото,
+        // и видео когда выбран один тип.
+        document
+            .querySelectorAll<HTMLElement>(".index-thumbnails [data-type]")
+            .forEach((el) => {
+                const show = !current || el.dataset.type === current
                 el.classList.toggle("is-filtered-out", !show)
             })
 

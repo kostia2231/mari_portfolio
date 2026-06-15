@@ -690,7 +690,8 @@
                     "w": 1920,
                     "h": 3414
                 }
-            ]
+            ],
+            "hideFromMain": true
         },
         {
             "tag": "Backstage 2",
@@ -713,7 +714,8 @@
                     "w": 1920,
                     "h": 1080
                 }
-            ]
+            ],
+            "hideFromMain": true
         },
         {
             "tag": "Backstage 4",
@@ -736,7 +738,8 @@
                     "w": 1920,
                     "h": 1080
                 }
-            ]
+            ],
+            "hideFromMain": true
         },
         {
             "tag": "Backstage 6",
@@ -747,7 +750,8 @@
                     "w": 480,
                     "h": 640
                 }
-            ]
+            ],
+            "hideFromMain": true
         },
         {
             "tag": "Evolve Collection",
