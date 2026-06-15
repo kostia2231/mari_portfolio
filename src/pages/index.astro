@@ -598,6 +598,21 @@
                 transform: translateZ(0);
                 backface-visibility: hidden;
             }
+            /* Cross-fade layers: оба <img>-слоя занимают одно и то же место,
+               активный имеет opacity 1, бэк — 0. Транзишн opacity даёт плавную
+               замену кадра без флэша во время декода нового изображения. */
+            .view-image > .viewer-img-layer {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) translateZ(0);
+                opacity: 0;
+                transition: opacity 250ms ease;
+                pointer-events: none;
+            }
+            .view-image > .viewer-img-layer.is-active {
+                opacity: 1;
+            }
             /* Те же edge-артефакты убираем во вьюере, см. main page rule выше. */
             .view-image > video {
                 /*clip-path: inset(1px);*/
@@ -638,7 +653,6 @@
             }
             .view-image__text__inner {
                 width: 100vw;
-                margin-inline: auto;
                 text-align: center;
                 display: flex;
                 flex-direction: column;
@@ -662,18 +676,18 @@
                 height: 50px;
                 pointer-events: none;
                 margin-bottom: 10px;
-                padding: 0 5px;
+                padding: 0 10px;
                 box-sizing: border-box;
             }
             .viewer-thumbs::-webkit-scrollbar {
                 display: none;
             }
-            .viewer-thumbs::after {
+            /*.viewer-thumbs::after {
                 content: "";
                 min-width: 1px;
                 padding-right: 5px;
                 flex-shrink: 0;
-            }
+            }*/
             .viewer-thumbs .viewer-thumb {
                 height: 100%;
                 width: auto;
@@ -806,6 +820,13 @@
             .world-image.is-filtered-out,
             .index-project-row.is-filtered-out {
                 display: none !important;
+            }
+            /* Hidden from main feed by default; only revealed when filter active. */
+            .world-image.is-hidden-main {
+                display: none !important;
+            }
+            .world-image.is-hidden-main.reveal-on-filter:not(.is-filtered-out) {
+                display: block !important;
             }
             .social-links {
                 display: flex;

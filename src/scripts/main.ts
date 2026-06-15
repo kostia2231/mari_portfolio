@@ -22,7 +22,7 @@ import { loadManifest, type MediaFile, type Project } from "../lib/manifest"
    State
    ============================================================ */
 
-type GalleryItem = MediaFile & { projectTag: string }
+type GalleryItem = MediaFile & { projectTag: string; hideFromMain?: boolean }
 
 const projectFilesMap = new Map<string, MediaFile[]>()
 const projectMetaMap = new Map<string, { services?: string }>()
@@ -280,10 +280,16 @@ async function loadFromManifest() {
 
     // Main page shows only files marked `featured` (formerly `portfolio` tag).
     // If a project has no featured files, fall back to its first file as cover.
+    // Проекты с hideFromMain рендерим тоже, но с классом .is-hidden-main —
+    // скрыты по дефолту, показываются только когда активен фильтр по типу.
     const galleryItems: GalleryItem[] = manifest.projects.flatMap((p) => {
         const featured = p.files.filter((f) => f.featured)
         const items = featured.length > 0 ? featured : p.files.slice(0, 1)
-        return items.map((f) => ({ ...f, projectTag: p.tag }))
+        return items.map((f) => ({
+            ...f,
+            projectTag: p.tag,
+            hideFromMain: p.hideFromMain === true,
+        }))
     })
 
     renderAbout(aboutProject?.files ?? [])
@@ -328,6 +334,7 @@ function renderGallery(items: GalleryItem[]) {
 
     const addToCol = (item: GalleryItem, index: number, col: HTMLElement) => {
         const wrapper = createMediaWrapper(item, index)
+        if (item.hideFromMain) wrapper.classList.add("is-hidden-main")
         col.appendChild(wrapper)
 
         wrapper.addEventListener("mouseenter", () => {
@@ -476,6 +483,8 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
         e.stopPropagation()
         document.querySelector(".index-wrapper")?.classList.remove("is-visible")
         document.querySelector("#index-btn")?.classList.remove("is-active")
+        gridOverlay.classList.remove("is-visible")
+        isIndexOpen = false
         const target = project.files[0]
         if (target) openProjectForFile(project.tag, target)
     })
@@ -544,7 +553,11 @@ async function openProject(
         } catch {
             /* ignore */
         }
-        stage.innerHTML = `<img id="viewer-main-img" src="${initialUrl}" style="width:100%; height:100%; object-fit:cover;">`
+        // Создаём пару layer'ов сразу — renderViewerFile позже будет
+        // переключать активный без повторной перерисовки innerHTML.
+        stage.innerHTML = `
+            <img id="viewer-img-a" class="viewer-img-layer is-active" src="${initialUrl}" decoding="async">
+            <img id="viewer-img-b" class="viewer-img-layer" decoding="async">`
     }
 
     pauseAllWorldVideos()
@@ -608,11 +621,8 @@ function updateViewerCursor() {
  * flex — никакого `object-fit`, никаких субпиксельных размеров → нет
  * шиммера у видео при воспроизведении.
  */
-function fitViewerMedia(file: MediaFile) {
-    const media = (document.getElementById("viewer-main-vid") ||
-        document.getElementById("viewer-main-img")) as HTMLElement | null
-    if (!media || !file.w || !file.h) return
-
+function fitViewerMedia(file: MediaFile, only?: HTMLElement) {
+    if (!file.w || !file.h) return
     const stage = $<HTMLElement>(".view-image")
     const cs = getComputedStyle(stage)
     const cw =
@@ -629,16 +639,26 @@ function fitViewerMedia(file: MediaFile) {
     let w: number
     let h: number
     if (cw / ch > aspect) {
-        // ограничивает высота, по бокам пустота
         h = Math.floor(ch)
         w = Math.round(h * aspect)
     } else {
-        // ограничивает ширина
         w = Math.floor(cw)
         h = Math.round(w / aspect)
     }
-    media.style.width = `${w}px`
-    media.style.height = `${h}px`
+    // Если передан конкретный элемент — ресайзим только его (важно для
+    // cross-fade: active не должен растягиваться в новый размер до swap'a).
+    const targets = only
+        ? [only]
+        : ([
+              document.getElementById("viewer-main-vid"),
+              document.getElementById("viewer-main-img"),
+              document.getElementById("viewer-img-a"),
+              document.getElementById("viewer-img-b"),
+          ].filter((el): el is HTMLElement => !!el) as HTMLElement[])
+    for (const el of targets) {
+        el.style.width = `${w}px`
+        el.style.height = `${h}px`
+    }
 }
 
 /**
@@ -661,6 +681,8 @@ function renderViewerFile(file: MediaFile) {
         const poster = posterUrl(file)
         const existingImg = document.getElementById("viewer-main-img")
         if (existingImg) existingImg.remove()
+        document.getElementById("viewer-img-a")?.remove()
+        document.getElementById("viewer-img-b")?.remove()
         let vid = document.getElementById(
             "viewer-main-vid",
         ) as HTMLVideoElement | null
@@ -681,51 +703,94 @@ function renderViewerFile(file: MediaFile) {
         const existingVid = document.getElementById("viewer-main-vid")
         if (existingVid) existingVid.remove()
 
-        // Всегда показываем lo сначала, потом апгрейдим до mid/hi. Даёт
-        // консистентный feel перехода, даже если hi уже в кеше.
-        let img = document.getElementById(
-            "viewer-main-img",
+        // Cross-fade на двух layer'ах. Старый кадр держится в своих размерах
+        // пока новый декодируется в back-layer'е. Когда back готов — fitViewerMedia
+        // меняет размер обоих, мы переключаем .is-active → плавная замена.
+        let a = document.getElementById(
+            "viewer-img-a",
         ) as HTMLImageElement | null
-        if (!img) {
-            stage.innerHTML = `<img id="viewer-main-img" src="${low}" decoding="async">`
-            img = document.getElementById("viewer-main-img") as HTMLImageElement
-        } else if (!img.src.includes(file.id) || !img.src.includes("-lo")) {
-            img.src = low
+        let b = document.getElementById(
+            "viewer-img-b",
+        ) as HTMLImageElement | null
+        if (!a || !b) {
+            stage.innerHTML = `
+                <img id="viewer-img-a" class="viewer-img-layer is-active" decoding="async">
+                <img id="viewer-img-b" class="viewer-img-layer" decoding="async">`
+            a = document.getElementById("viewer-img-a") as HTMLImageElement
+            b = document.getElementById("viewer-img-b") as HTMLImageElement
+        }
+        const active = a.classList.contains("is-active") ? a : b
+        const back = active === a ? b : a
+        const fileId = file.id
+
+        // mid/hi cascade. Декодим оба, но при swap'е применяем ТОЛЬКО hi
+        // если он уже готов — иначе временно показываем mid пока ждём hi.
+        // Это убирает двойной swap (lo→mid→hi), который виден как мерцание.
+        const startCascade = (target: HTMLImageElement) => {
+            const loSetAt = performance.now()
+            const MIN_LO_MS = isViewerOpening ? 700 : 300
+            const delayedSwap = (cb: () => void) => {
+                const elapsed = performance.now() - loSetAt
+                if (elapsed >= MIN_LO_MS) cb()
+                else setTimeout(cb, MIN_LO_MS - elapsed)
+            }
+
+            let hiReady = false
+            const md = new Image()
+            md.src = mid
+            const hd = new Image()
+            hd.src = hi
+
+            hd.decode()
+                .then(() => {
+                    hiReady = true
+                    delayedSwap(() => {
+                        if (target.src.includes(fileId)) target.src = hi
+                    })
+                })
+                .catch(() => {})
+
+            md.decode()
+                .then(() =>
+                    delayedSwap(() => {
+                        // Если hi уже подъехал — пропускаем mid: лишний swap.
+                        if (hiReady) return
+                        if (
+                            target.src.includes(fileId) &&
+                            target.src.includes("-lo")
+                        ) {
+                            target.src = mid
+                        }
+                    }),
+                )
+                .catch(() => {})
         }
 
-        // Удержание на lo: 300 мс при next/prev, 700 мс при открытии (чтобы
-        // свап img.src не дёргался во время slide-up анимации виуйера 600ms).
-        const loSetAt = performance.now()
-        const MIN_LO_MS = isViewerOpening ? 700 : 300
-        const delayedSwap = (cb: () => void) => {
-            const elapsed = performance.now() - loSetAt
-            if (elapsed >= MIN_LO_MS) cb()
-            else setTimeout(cb, MIN_LO_MS - elapsed)
+        // Тот же файл уже активен в lo — ничего не меняем, только cascade.
+        if (active.src.includes(fileId) && active.src.includes("-lo")) {
+            fitViewerMedia(file, active)
+            startCascade(active)
+            return
         }
 
-        // Цепочка lo → mid → hi. onload ставится ДО src, иначе для cached
-        // картинок load событие пропустится.
-        const md = new Image()
-        md.onload = () =>
-            delayedSwap(() => {
-                if (
-                    img &&
-                    img.src.includes(file.id) &&
-                    img.src.includes("-lo")
-                ) {
-                    img.src = mid
-                }
+        // Готовим back-layer: ставим src и сразу resize только его (active
+        // остаётся в своих исходных размерах, пока не сделаем swap).
+        back.src = low
+        fitViewerMedia(file, back)
+        back
+            .decode()
+            .then(() => {
+                if (back.src !== new URL(low, location.href).href) return
+                back.classList.add("is-active")
+                active.classList.remove("is-active")
+                startCascade(back)
             })
-        md.src = mid
-
-        const hd = new Image()
-        hd.onload = () =>
-            delayedSwap(() => {
-                if (img && img.src.includes(file.id)) {
-                    img.src = hi
-                }
+            .catch(() => {
+                back.classList.add("is-active")
+                active.classList.remove("is-active")
+                startCascade(back)
             })
-        hd.src = hi
+        return
     }
 
     fitViewerMedia(file)
@@ -893,8 +958,9 @@ function initSyncScroll() {
         pendingDelta = 0
         lWrap.scrollLeft = newL
     }
-    const worldEl = document.getElementById("world")
-    ;(worldEl ?? document.documentElement).addEventListener(
+    // Listen on documentElement: viewer-wrapper и #world — siblings,
+    // wheel events не баблятся между ними. Слушаем общего предка.
+    document.documentElement.addEventListener(
         "wheel",
         (e: WheelEvent) => {
             if (isViewerOpen || isInfoOpen || isIndexOpen) return
@@ -939,6 +1005,9 @@ function initViewerControls() {
 
     viewImageWrapper.addEventListener("click", () => {
         isViewerOpen = false
+        // Defensive: ensure no stale overlay flag blocks the wheel handler.
+        isInfoOpen = false
+        isIndexOpen = false
         document.body.style.overflow = ""
         document
             .querySelector("#top-image-description")
@@ -1214,6 +1283,12 @@ function initFilters() {
         document.querySelectorAll<HTMLElement>(".world-image").forEach((el) => {
             const show = !current || el.dataset.type === current
             el.classList.toggle("is-filtered-out", !show)
+            // .is-hidden-main скрыто по дефолту, но при активном фильтре
+            // переключается классом .reveal-on-filter (если тип совпадает).
+            el.classList.toggle(
+                "reveal-on-filter",
+                !!current && el.dataset.type === current,
+            )
         })
 
         document

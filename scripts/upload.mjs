@@ -45,7 +45,7 @@ const MANIFEST_PATH = path.join(PROJECT_ROOT, "public", "projects.json");
 
 const MAIN_SUBFOLDER = "main";
 const IMG_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
-const VID_EXT = new Set([".mp4", ".mov", ".m4v"]);
+const VID_EXT = new Set([".mp4", ".mov", ".m4v", ".webm"]);
 
 const slugify = (s) =>
     s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -204,6 +204,9 @@ async function processProject(displayName) {
     }
     if (typeof meta.position === "number") {
         project.position = meta.position;
+    }
+    if (meta.hideFromMain === true) {
+        project.hideFromMain = true;
     }
     return project;
 }

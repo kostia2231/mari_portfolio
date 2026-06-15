@@ -22,6 +22,8 @@ export interface Project {
     services?: string;
     /** Optional sort order — lower numbers first. Без значения — в конец. */
     position?: number;
+    /** Hide from main gallery; still appears in index and via type filters. */
+    hideFromMain?: boolean;
     files: MediaFile[];
 }
 
