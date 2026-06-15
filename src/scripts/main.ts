@@ -765,7 +765,6 @@ function renderViewerFile(file: MediaFile) {
             md.decode()
                 .then(() =>
                     delayedSwap(() => {
-                        // Если hi уже подъехал — пропускаем mid: лишний swap.
                         if (hiReady) return
                         if (
                             target.src.includes(fileId) &&

@@ -607,7 +607,6 @@
                 left: 50%;
                 transform: translate(-50%, -50%) translateZ(0);
                 opacity: 0;
-                transition: opacity 250ms ease;
                 pointer-events: none;
             }
             .view-image > .viewer-img-layer.is-active {
@@ -954,6 +953,7 @@
                     top: auto;
                     bottom: 36px;
                     transform: none;
+                    z-index: 111;
                 }
                 .information {
                     font-size: 32px;
