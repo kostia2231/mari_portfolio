@@ -14,6 +14,7 @@ import {
     midResUrl,
     posterUrl,
     thumbHiUrl,
+    thumbVideoUrl,
     videoSrcUrl,
 } from "../lib/cdn"
 import { loadManifest, type MediaFile, type Project } from "../lib/manifest"
@@ -493,6 +494,13 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
     thumbs.innerHTML = project.files
         .map((file, i) => {
             const cls = i >= MAX_THUMBS ? "thumb-extra" : ""
+            if (file.type === "video") {
+                // -mid.mp4 — самый низкобитрейтный вариант, лежит в R2
+                // специально для миниатюр. preload="metadata" чтобы был
+                // первый кадр без полной загрузки. autoplay+muted+loop —
+                // микро-видео крутятся в индексе как gif'ки.
+                return `<video class="${cls}" src="${thumbVideoUrl(file)}" poster="${lowResUrl(file)}" muted loop autoplay playsinline preload="metadata" disableremoteplayback></video>`
+            }
             return `<img class="${cls}" src="${lowResUrl(file)}" alt="" loading="lazy" decoding="async">`
         })
         .join("")
@@ -1351,6 +1359,30 @@ function initIndexButton() {
    Filter buttons (Photography / Video)
    ============================================================ */
 
+/**
+ * Пересобирает transition-delay для видимых элементов по сплошному индексу
+ * (0, 0.05, 0.10, ...). Скрытые (.is-filtered-out / display: none) индексы
+ * пропускаются, поэтому stagger выглядит ровным независимо от того,
+ * сколько элементов отфильтровано.
+ */
+function restaggerVisible(selector: string) {
+    let i = 0
+    document.querySelectorAll<HTMLElement>(selector).forEach((el) => {
+        if (el.classList.contains("is-filtered-out")) return
+        // Игнорим элементы, реально не рендерящиеся (is-hidden-main без
+        // reveal-on-filter). У них display: none, анимация всё равно не
+        // пойдёт, но и место в stagger они тоже не занимают.
+        if (
+            el.classList.contains("is-hidden-main") &&
+            !el.classList.contains("reveal-on-filter")
+        ) {
+            return
+        }
+        el.style.transitionDelay = `${i * 0.05}s`
+        i++
+    })
+}
+
 function initFilters() {
     const photoBtn = document.querySelector<HTMLElement>("#filter-photo")
     const videoBtn = document.querySelector<HTMLElement>("#filter-video")
@@ -1383,6 +1415,13 @@ function initFilters() {
                     (current === "video" && el.dataset.hasVideo === "1")
                 el.classList.toggle("is-filtered-out", !show)
             })
+
+        // Re-stagger по ВИДИМЫМ (после фильтра) индексам. Без этого reveal
+        // и любая stagger-анимация идёт с inline transition-delay = origIdx
+        // * 0.05s — между видимыми элементами образуются пустые «дыры» во
+        // времени, выглядит рвано.
+        restaggerVisible(".world-image")
+        restaggerVisible(".index-project-row")
 
         const lWrap = document.querySelector<HTMLElement>(".left-wrapper")
         if (lWrap) {

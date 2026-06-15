@@ -631,27 +631,39 @@
             "files": [
                 {
                     "type": "image",
-                    "id": "projects/about/15-026172",
-                    "w": 6000,
-                    "h": 4000
+                    "id": "projects/about/1",
+                    "w": 1920,
+                    "h": 2418
                 },
                 {
                     "type": "image",
-                    "id": "projects/about/img-1444-jpg",
-                    "w": 4032,
-                    "h": 3024
+                    "id": "projects/about/6",
+                    "w": 1920,
+                    "h": 1280
                 },
                 {
                     "type": "image",
-                    "id": "projects/about/img-3056-jpg",
-                    "w": 2299,
-                    "h": 2895
+                    "id": "projects/about/img-1444",
+                    "w": 1920,
+                    "h": 1440
                 },
                 {
                     "type": "image",
-                    "id": "projects/about/img-7283-jpg",
-                    "w": 3024,
-                    "h": 3024
+                    "id": "projects/about/img-2131",
+                    "w": 1920,
+                    "h": 2401
+                },
+                {
+                    "type": "image",
+                    "id": "projects/about/img-2444",
+                    "w": 1920,
+                    "h": 1440
+                },
+                {
+                    "type": "image",
+                    "id": "projects/about/img-7283",
+                    "w": 1920,
+                    "h": 1920
                 }
             ]
         },
@@ -668,6 +680,74 @@
             ],
             "services": "Styling",
             "hideFromMain": true
+        },
+        {
+            "tag": "Backstage 1",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/backstage-1/img-9262",
+                    "w": 1920,
+                    "h": 3414
+                }
+            ]
+        },
+        {
+            "tag": "Backstage 2",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/backstage-2/img-2962",
+                    "w": 1080,
+                    "h": 1920
+                }
+            ],
+            "hideFromMain": true
+        },
+        {
+            "tag": "Backstage 3",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/backstage-3/img-4794",
+                    "w": 1920,
+                    "h": 1080
+                }
+            ]
+        },
+        {
+            "tag": "Backstage 4",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/backstage-4/img-3132",
+                    "w": 1080,
+                    "h": 1920
+                }
+            ],
+            "hideFromMain": true
+        },
+        {
+            "tag": "Backstage 5",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/backstage-5/img-4825",
+                    "w": 1920,
+                    "h": 1080
+                }
+            ]
+        },
+        {
+            "tag": "Backstage 6",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/backstage-6/vhs-2024-08-24-191452-829",
+                    "w": 480,
+                    "h": 640
+                }
+            ]
         },
         {
             "tag": "Evolve Collection",
