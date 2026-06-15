@@ -175,6 +175,7 @@
                     "featured": true
                 }
             ],
+            "services": "Art Direction, Styling",
             "position": 2
         },
         {
@@ -1226,7 +1227,8 @@
                     "w": 1920,
                     "h": 2880
                 }
-            ]
+            ],
+            "services": "Art Direction, Styling"
         },
         {
             "tag": "Sokolroom",
