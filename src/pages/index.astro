@@ -660,9 +660,6 @@
                 transition: opacity 0.2s cubic-bezier(0.77, 0, 0.175, 1);
                 opacity: 1;
             }
-            .view-image__text.is-visible .view-image__text__close {
-                pointer-events: auto;
-            }
 
             .viewer-thumbs {
                 display: flex;
@@ -672,7 +669,7 @@
                 overflow-x: auto;
                 scroll-behavior: smooth;
                 margin-inline: auto;
-                height: 50px;
+                height: 70px;
                 pointer-events: none;
                 margin-bottom: 10px;
                 padding: 0 10px;
@@ -694,13 +691,14 @@
                 display: block;
                 cursor: pointer;
                 filter: grayscale(1);
-                opacity: 0.2;
+                opacity: 0.3;
                 flex-shrink: 0;
             }
             .viewer-thumbs .viewer-thumb:hover,
             .viewer-thumbs .viewer-thumb.is-active {
                 opacity: 1;
                 filter: grayscale(0);
+                /*border: 1px solid red;*/
             }
 
             .view-image__text.is-visible .viewer-thumbs {
@@ -719,6 +717,7 @@
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.4s ease;
+                mix-blend-mode: difference;
             }
             .video-controls.is-visible {
                 opacity: 1;
@@ -745,14 +744,7 @@
             .video-controls__play-pause {
                 margin-left: 15px;
                 margin-right: 5px;
-                transition:
-                    color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
-                    padding 0.3s linear;
-            }
-            .video-controls__play-pause:hover {
-                padding-left: 15px;
-                padding-right: 15px;
-                background-color: #f61d3d;
+                color: white;
             }
             .video-controls__less-more {
                 margin-left: 5px;
@@ -769,14 +761,7 @@
             .video-controls__sound {
                 margin-left: 5px;
                 margin-right: 5px;
-                transition:
-                    color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
-                    padding 0.3s linear;
-            }
-            .video-controls__sound:hover {
-                padding-left: 15px;
-                padding-right: 15px;
-                background-color: #fffdcf;
+                color: white;
             }
             .video-controls__time {
                 display: flex;
@@ -784,9 +769,9 @@
                 gap: 10px;
                 margin-left: 5px;
                 margin-right: 15px;
+                color: white;
             }
             .video-controls__time-duration {
-                color: black;
                 opacity: 0.6;
             }
             .viewer-nav {
@@ -804,17 +789,22 @@
                 right: 0;
             }
             .view-image__text__close {
-                text-align: right;
+                position: fixed;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 111;
+                text-align: center;
                 pointer-events: none;
                 cursor: zoom-out;
-                transition:
-                    color 0.3s cubic-bezier(0.77, 0, 0.175, 1),
-                    padding 0.3s linear;
+                color: white;
+                mix-blend-mode: difference;
+                opacity: 0;
+                transition: opacity 0.2s cubic-bezier(0.77, 0, 0.175, 1);
             }
-            .view-image__text__close:hover {
-                padding-left: 15px;
-                padding-right: 15px;
-                background-color: #fffdcf;
+            .view-image__text.is-visible ~ .view-image__text__close {
+                opacity: 1;
+                pointer-events: auto;
             }
             .world-image.is-filtered-out,
             .index-project-row.is-filtered-out {
@@ -1010,20 +1000,25 @@
                         flex-grow: 1;
                         margin: 0 5px;
                         position: relative;
-                        height: 3px;
+                        align-self: stretch;
                         display: flex;
                         align-items: center;
                         cursor: pointer;
-                        background-color: rgba(0, 0, 0, 0.05);
                     "
                 >
-                    <div style="width: 100%; height: 3px">
+                    <div
+                        style="
+                            width: 100%;
+                            height: 1px;
+                            background-color: rgba(255, 255, 255, 0.1);
+                        "
+                    >
                         <div
                             class="video-controls__progress-bar"
                             style="
                                 width: 0%;
                                 height: 100%;
-                                background-color: rgba(32, 32, 32, 0.5);
+                                background-color: rgba(255, 255, 255, 0.5);
                                 will-change: width;
                             "
                         >
@@ -1037,17 +1032,17 @@
             </div>
 
             <div class="view-image__text">
-                <div class="view-image__text__close">Close</div>
+                <div></div>
                 <div class="view-image__text__inner">
                     <div class="viewer-thumbs"></div>
                     <div class="view-image__text__caption">
-                        <span class="red-bg mr project-title-ui">
-                            Aisenberg Icons
-                        </span>
+                        <span class="red-bg mr project-title-ui"></span>
                         <span class="yellow-bg project-services"></span>
                     </div>
                 </div>
             </div>
+
+            <div class="view-image__text__close">Close</div>
 
             <div class="view-image-wrapper">
                 <div class="view-image"></div>

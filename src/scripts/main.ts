@@ -738,13 +738,33 @@ function renderViewerFile(file: MediaFile) {
         // mid/hi cascade. Декодим оба, но при swap'е применяем ТОЛЬКО hi
         // если он уже готов — иначе временно показываем mid пока ждём hi.
         // Это убирает двойной swap (lo→mid→hi), который виден как мерцание.
-        const startCascade = (target: HTMLImageElement) => {
+        // Swap идёт через back-layer: новая картинка сначала декодится на
+        // невидимом <img>, и только потом меняется is-active. Без этого
+        // присвоение target.src = hi на видимом элементе вызывает короткий
+        // flicker во время element-side декода.
+        const startCascade = () => {
             const loSetAt = performance.now()
             const MIN_LO_MS = isViewerOpening ? 700 : 300
             const delayedSwap = (cb: () => void) => {
                 const elapsed = performance.now() - loSetAt
                 if (elapsed >= MIN_LO_MS) cb()
                 else setTimeout(cb, MIN_LO_MS - elapsed)
+            }
+
+            const swapLayer = async (newSrc: string) => {
+                const cur = a!.classList.contains("is-active") ? a! : b!
+                const nxt = cur === a ? b! : a!
+                nxt.src = newSrc
+                try {
+                    await nxt.decode()
+                } catch {
+                    return
+                }
+                if (!nxt.src.includes(fileId)) return
+                if (!cur.src.includes(fileId)) return
+                fitViewerMedia(file, nxt)
+                nxt.classList.add("is-active")
+                cur.classList.remove("is-active")
             }
 
             let hiReady = false
@@ -756,9 +776,7 @@ function renderViewerFile(file: MediaFile) {
             hd.decode()
                 .then(() => {
                     hiReady = true
-                    delayedSwap(() => {
-                        if (target.src.includes(fileId)) target.src = hi
-                    })
+                    delayedSwap(() => swapLayer(hi))
                 })
                 .catch(() => {})
 
@@ -766,12 +784,11 @@ function renderViewerFile(file: MediaFile) {
                 .then(() =>
                     delayedSwap(() => {
                         if (hiReady) return
-                        if (
-                            target.src.includes(fileId) &&
-                            target.src.includes("-lo")
-                        ) {
-                            target.src = mid
-                        }
+                        const cur = a!.classList.contains("is-active")
+                            ? a!
+                            : b!
+                        if (!cur.src.includes("-lo")) return
+                        swapLayer(mid)
                     }),
                 )
                 .catch(() => {})
@@ -780,7 +797,7 @@ function renderViewerFile(file: MediaFile) {
         // Тот же файл уже активен в lo — ничего не меняем, только cascade.
         if (active.src.includes(fileId) && active.src.includes("-lo")) {
             fitViewerMedia(file, active)
-            startCascade(active)
+            startCascade()
             return
         }
 
@@ -794,12 +811,12 @@ function renderViewerFile(file: MediaFile) {
                 if (back.src !== new URL(low, location.href).href) return
                 back.classList.add("is-active")
                 active.classList.remove("is-active")
-                startCascade(back)
+                startCascade()
             })
             .catch(() => {
                 back.classList.add("is-active")
                 active.classList.remove("is-active")
-                startCascade(back)
+                startCascade()
             })
         return
     }
@@ -1275,6 +1292,28 @@ function initIndexButton() {
         { once: true },
     )
 
+    // Сбрасывает строки индекса в стартовую позицию (translateX(-100%))
+    // мгновенно, без transition — это нужно, чтобы при каждом открытии
+    // stagger-анимация запускалась с нуля. Иначе, если быстро ткнуть закрыть/
+    // открыть или вернуться со скролла, строки доезжают/уезжают из своих
+    // промежуточных положений и выглядят как лаг.
+    const resetIndexRows = () => {
+        const rows = wrap.querySelectorAll<HTMLElement>(".index-project-row")
+        // Longhand transition-property, чтобы НЕ затрагивать inline
+        // transition-delay (он задаёт stagger в createProjectRow).
+        rows.forEach((r) => {
+            r.style.transitionProperty = "none"
+            r.style.transform = "translateX(-100%)"
+        })
+        // Force reflow, иначе браузер схлопнет два style-mutation в один и
+        // мы перепрыгнем сразу в финальное состояние без анимации.
+        void wrap.offsetHeight
+        rows.forEach((r) => {
+            r.style.transitionProperty = ""
+            r.style.transform = ""
+        })
+    }
+
     btn.addEventListener("click", () => {
         const isOpen = wrap.classList.contains("is-visible")
         if (isOpen) {
@@ -1286,6 +1325,7 @@ function initIndexButton() {
         } else {
             isIndexOpen = true
             wrap.scrollTop = 0
+            resetIndexRows()
             wrap.classList.add("is-visible")
             btn.classList.add("is-active")
             gridOverlay.classList.add("is-visible")

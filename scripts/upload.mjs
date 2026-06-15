@@ -167,25 +167,34 @@ async function processProject(displayName) {
     console.log(`\n[${displayName}] (slug: ${slug}, ${items.length} files)`);
 
     const files = [];
-    let imgIdx = 0;
-    let vidIdx = 0;
+    // baseName строим из slugify(имя исходного файла без расширения), а не
+    // из порядкового индекса. Это нужно чтобы перемещение файла в main/
+    // (или любая другая перестановка) не сдвигало нумерацию: ключи в R2
+    // остаются стабильными, uploadIfNeeded не отдаёт чужие байты под
+    // прежним ключом.
+    const usedBaseNames = new Set();
+    const uniqueBaseName = (raw) => {
+        const base = slugify(raw) || "file";
+        if (!usedBaseNames.has(base)) {
+            usedBaseNames.add(base);
+            return base;
+        }
+        let i = 2;
+        while (usedBaseNames.has(`${base}-${i}`)) i++;
+        const out = `${base}-${i}`;
+        usedBaseNames.add(out);
+        return out;
+    };
 
     for (const { localPath, featured } of items) {
         const ext = path.extname(localPath).toLowerCase();
+        const baseName = uniqueBaseName(path.basename(localPath, ext));
         try {
             let entry;
             if (IMG_EXT.has(ext)) {
-                entry = await processImage(
-                    localPath,
-                    slug,
-                    String(++imgIdx).padStart(2, "0"),
-                );
+                entry = await processImage(localPath, slug, baseName);
             } else if (VID_EXT.has(ext)) {
-                entry = await processVideo(
-                    localPath,
-                    slug,
-                    `video-${String(++vidIdx).padStart(2, "0")}`,
-                );
+                entry = await processVideo(localPath, slug, baseName);
             } else {
                 continue;
             }
