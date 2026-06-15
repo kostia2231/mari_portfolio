@@ -513,7 +513,19 @@
             .about-images .about-tile img {
                 height: 100%;
                 width: auto;
+                max-width: 100%;
+                object-fit: contain;
                 display: block;
+            }
+            @media (max-width: 767px) {
+                .about-images .about-tile {
+                    height: auto;
+                    max-width: calc(100vw - 10px);
+                }
+                .about-images .about-tile img {
+                    height: auto;
+                    width: 100%;
+                }
             }
             .information-wrapper {
                 position: fixed;
