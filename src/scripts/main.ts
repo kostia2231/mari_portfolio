@@ -525,6 +525,18 @@ async function openProject(
     setTimeout(() => {
         isViewerOpening = false
     }, 650)
+    // На мобиле body вертикально скроллится. Запоминаем позицию,
+    // фиксируем body — иначе при свернутом URL-баре fixed-элементы
+    // viewer'а оказываются не в визуальной области.
+    if (isMobile()) {
+        const y = window.scrollY
+        document.body.dataset.scrollY = String(y)
+        document.body.style.position = "fixed"
+        document.body.style.top = `-${y}px`
+        document.body.style.left = "0"
+        document.body.style.right = "0"
+        document.body.style.width = "100%"
+    }
     document.body.style.overflow = "hidden"
 
     const wrapper = $<HTMLElement>(".view-image-wrapper")
@@ -963,6 +975,27 @@ function initSyncScroll() {
     document.documentElement.addEventListener(
         "wheel",
         (e: WheelEvent) => {
+            // Watchdog: sync флаги с фактическим DOM. Если флаг true, а оверлей
+            // не visible — кто-то закрыл не через ожидаемый путь, флаг чиним.
+            if (
+                isViewerOpen &&
+                !document.querySelector(".view-image-wrapper.is-visible")
+            ) {
+                isViewerOpen = false
+            }
+            if (
+                isInfoOpen &&
+                !document.querySelector(".information-wrapper.is-visible")
+            ) {
+                isInfoOpen = false
+            }
+            if (
+                isIndexOpen &&
+                !document.querySelector(".index-wrapper.is-visible")
+            ) {
+                isIndexOpen = false
+            }
+
             if (isViewerOpen || isInfoOpen || isIndexOpen) return
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
             e.preventDefault()
@@ -1009,6 +1042,17 @@ function initViewerControls() {
         isInfoOpen = false
         isIndexOpen = false
         document.body.style.overflow = ""
+        // Снимаем мобильный body-lock и возвращаем прежний scrollY.
+        if (document.body.dataset.scrollY !== undefined) {
+            const y = parseInt(document.body.dataset.scrollY || "0", 10)
+            document.body.style.position = ""
+            document.body.style.top = ""
+            document.body.style.left = ""
+            document.body.style.right = ""
+            document.body.style.width = ""
+            delete document.body.dataset.scrollY
+            window.scrollTo(0, y)
+        }
         document
             .querySelector("#top-image-description")
             ?.classList.remove("is-visible")
