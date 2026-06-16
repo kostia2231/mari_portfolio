@@ -1272,6 +1272,25 @@ function initAbout() {
     infoBlock.onclick = () => {
         infoWrap.classList.remove("is-visible")
         isInfoOpen = false
+        // Сбрасываем смежные флаги — иначе wheel handler может «застрять»
+        // с возвратом early-return из-за фантомного isViewerOpen/isIndexOpen,
+        // и вертикальное колесо перестаёт скроллить ленту после закрытия.
+        isViewerOpen = false
+        isIndexOpen = false
+        // Защёлкивающий body-lock из viewer'а на мобилке (см. openProject)
+        // тоже снимаем — на случай если About закрыт без прохода через
+        // viewer-close.
+        document.body.style.overflow = ""
+        if (document.body.dataset.scrollY !== undefined) {
+            const y = parseInt(document.body.dataset.scrollY || "0", 10)
+            document.body.style.position = ""
+            document.body.style.top = ""
+            document.body.style.left = ""
+            document.body.style.right = ""
+            document.body.style.width = ""
+            delete document.body.dataset.scrollY
+            window.scrollTo(0, y)
+        }
     }
     infoBtn.onclick = () => {
         infoBlock.scrollTop = 0
