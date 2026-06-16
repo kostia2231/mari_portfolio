@@ -1235,22 +1235,22 @@
             "files": [
                 {
                     "type": "image",
+                    "id": "projects/sokolroom/sokolroom-personal-project-4",
+                    "w": 1920,
+                    "h": 1280,
+                    "featured": true
+                },
+                {
+                    "type": "image",
                     "id": "projects/sokolroom/27-015291",
                     "w": 1920,
-                    "h": 2880,
-                    "featured": true
+                    "h": 2880
                 },
                 {
                     "type": "image",
                     "id": "projects/sokolroom/sokolroom-personal-project-1",
                     "w": 1920,
                     "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/sokolroom/sokolroom-personal-project-4",
-                    "w": 1920,
-                    "h": 1280
                 }
             ],
             "services": "Art Direction, Styling"
