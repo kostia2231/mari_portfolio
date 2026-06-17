@@ -217,6 +217,12 @@ async function processProject(displayName) {
     if (meta.hideFromMain === true) {
         project.hideFromMain = true;
     }
+    if (meta.previewOnly === true) {
+        project.previewOnly = true;
+    }
+    if (meta.mute === true) {
+        project.mute = true;
+    }
     return project;
 }
 

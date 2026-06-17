@@ -12,25 +12,7 @@
                 },
                 {
                     "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a2557",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a2563-1",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
                     "id": "projects/aisenberg-ss25/1c7a2629",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a2647",
                     "w": 1920,
                     "h": 2880
                 },
@@ -43,12 +25,6 @@
                 {
                     "type": "image",
                     "id": "projects/aisenberg-ss25/1c7a2887",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a3028",
                     "w": 1920,
                     "h": 1280
                 },
@@ -96,39 +72,9 @@
                 },
                 {
                     "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a3637",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
                     "id": "projects/aisenberg-ss25/1c7a3661",
                     "w": 1920,
                     "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a3716",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a3730",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a3789",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a3821",
-                    "w": 1920,
-                    "h": 1280
                 },
                 {
                     "type": "image",
@@ -138,21 +84,9 @@
                 },
                 {
                     "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a3852",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
                     "id": "projects/aisenberg-ss25/1c7a3934",
                     "w": 1920,
                     "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-ss25/1c7a4029",
-                    "w": 1920,
-                    "h": 2880
                 },
                 {
                     "type": "image",
@@ -163,6 +97,22 @@
             ],
             "services": "Art Direction, Producing, Styling",
             "position": 1
+        },
+        {
+            "tag": "BMW Motorrad",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/bmw-motorrad/bmw",
+                    "w": 1920,
+                    "h": 1024,
+                    "featured": true
+                }
+            ],
+            "services": "Styling",
+            "position": 1,
+            "hideFromMain": true,
+            "mute": true
         },
         {
             "tag": "RoomRoom Sirens",
@@ -285,68 +235,36 @@
             "position": 4
         },
         {
-            "tag": "Home Campaign pt.1",
+            "tag": "RoomRoom",
             "files": [
                 {
                     "type": "image",
-                    "id": "projects/home-campaign-pt-1/home-campaign-1",
-                    "w": 1920,
-                    "h": 2880,
-                    "featured": true
-                },
-                {
-                    "type": "image",
-                    "id": "projects/home-campaign-pt-1/home-campaign",
-                    "w": 1920,
-                    "h": 2688
-                },
-                {
-                    "type": "image",
-                    "id": "projects/home-campaign-pt-1/home-campaign-2",
-                    "w": 1920,
-                    "h": 2690
-                },
-                {
-                    "type": "image",
-                    "id": "projects/home-campaign-pt-1/home-campaign-3",
-                    "w": 1920,
-                    "h": 2713
-                },
-                {
-                    "type": "image",
-                    "id": "projects/home-campaign-pt-1/home19600",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/home-campaign-pt-1/home19630",
-                    "w": 1920,
-                    "h": 1280
-                }
-            ],
-            "services": "Art Direction, Set Design, Styling",
-            "position": 5
-        },
-        {
-            "tag": "Home Campaign pt.2",
-            "files": [
-                {
-                    "type": "image",
-                    "id": "projects/home-campaign-pt-2/home19350",
+                    "id": "projects/roomroom/1c7a932",
                     "w": 1920,
                     "h": 1280,
                     "featured": true
                 },
                 {
                     "type": "image",
-                    "id": "projects/home-campaign-pt-2/home19323",
+                    "id": "projects/roomroom/1c7a9663",
                     "w": 1920,
                     "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/roomroom/1c7a9953",
+                    "w": 1920,
+                    "h": 1280
+                },
+                {
+                    "type": "image",
+                    "id": "projects/roomroom/c7a9640",
+                    "w": 1920,
+                    "h": 2880
                 }
             ],
-            "services": "Art Direction, Set Design, Styling",
-            "position": 6
+            "services": "Art Direction, Styling",
+            "position": 5
         },
         {
             "tag": "10 Magazine DE (Backstage)",
@@ -383,44 +301,33 @@
                 }
             ],
             "services": "Styling",
-            "position": 7
+            "position": 7,
+            "mute": true
         },
         {
-            "tag": "Aisenberg FW24",
+            "tag": "Personal Project 8",
             "files": [
                 {
                     "type": "image",
-                    "id": "projects/aisenberg-fw24/1c7a2292",
+                    "id": "projects/personal-project-8/sonya-28",
                     "w": 1920,
                     "h": 2880,
                     "featured": true
                 },
                 {
                     "type": "image",
-                    "id": "projects/aisenberg-fw24/1c7a2231",
+                    "id": "projects/personal-project-8/sonya-29",
                     "w": 1920,
                     "h": 2880
                 },
                 {
                     "type": "image",
-                    "id": "projects/aisenberg-fw24/1c7a2884",
+                    "id": "projects/personal-project-8/sonya-46",
                     "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-fw24/aisenderg0002-3",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/aisenberg-fw24/as0043-2",
-                    "w": 1920,
-                    "h": 2880
+                    "h": 1280
                 }
             ],
-            "services": "Art Direction, Styling",
+            "services": "Styling",
             "position": 8
         },
         {
@@ -669,6 +576,44 @@
             ]
         },
         {
+            "tag": "Aisenberg FW24",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-fw24/1c7a2292",
+                    "w": 1920,
+                    "h": 2880,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-fw24/1c7a2231",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-fw24/1c7a2884",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-fw24/aisenderg0002-3",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/aisenberg-fw24/as0043-2",
+                    "w": 1920,
+                    "h": 2880
+                }
+            ],
+            "services": "Art Direction, Styling",
+            "hideFromMain": true
+        },
+        {
             "tag": "Arina",
             "files": [
                 {
@@ -681,6 +626,48 @@
             ],
             "services": "Styling",
             "hideFromMain": true
+        },
+        {
+            "tag": "BIEHU - Hochu Tebe",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/biehu-hochu-tebe/biehu-hochu-tebe",
+                    "w": 1440,
+                    "h": 1080,
+                    "featured": true
+                },
+                {
+                    "type": "video",
+                    "id": "projects/biehu-hochu-tebe/biehu-2024",
+                    "w": 3840,
+                    "h": 2026
+                }
+            ],
+            "services": "Styling",
+            "hideFromMain": true,
+            "previewOnly": true
+        },
+        {
+            "tag": "BIEHU - Yaka ye Ya?",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/biehu-yaka-ye-ya/biehu-yaka-ya-ye",
+                    "w": 1440,
+                    "h": 1080,
+                    "featured": true
+                },
+                {
+                    "type": "video",
+                    "id": "projects/biehu-yaka-ye-ya/biehu-official-video",
+                    "w": 2560,
+                    "h": 1920
+                }
+            ],
+            "services": "Styling",
+            "hideFromMain": true,
+            "previewOnly": true
         },
         {
             "tag": "Backstage 1",
@@ -755,6 +742,27 @@
             "hideFromMain": true
         },
         {
+            "tag": "Buty",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/buty/gif-vlada",
+                    "w": 1920,
+                    "h": 1080,
+                    "featured": true
+                },
+                {
+                    "type": "video",
+                    "id": "projects/buty/live-final-4kfull",
+                    "w": 1920,
+                    "h": 1080
+                }
+            ],
+            "services": "Styling",
+            "hideFromMain": true,
+            "previewOnly": true
+        },
+        {
             "tag": "Evolve Collection",
             "files": [
                 {
@@ -771,6 +779,69 @@
                     "h": 2399
                 }
             ]
+        },
+        {
+            "tag": "Home Campaign pt.1",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/home-campaign-1",
+                    "w": 1920,
+                    "h": 2880,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/home-campaign",
+                    "w": 1920,
+                    "h": 2688
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/home-campaign-2",
+                    "w": 1920,
+                    "h": 2690
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/home-campaign-3",
+                    "w": 1920,
+                    "h": 2713
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/home19600",
+                    "w": 1920,
+                    "h": 2880
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-1/home19630",
+                    "w": 1920,
+                    "h": 1280
+                }
+            ],
+            "services": "Art Direction, Set Design, Styling",
+            "hideFromMain": true
+        },
+        {
+            "tag": "Home Campaign pt.2",
+            "files": [
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/home19350",
+                    "w": 1920,
+                    "h": 1280,
+                    "featured": true
+                },
+                {
+                    "type": "image",
+                    "id": "projects/home-campaign-pt-2/home19323",
+                    "w": 1920,
+                    "h": 1280
+                }
+            ],
+            "services": "Art Direction, Set Design, Styling"
         },
         {
             "tag": "Lage",
@@ -821,6 +892,48 @@
             ],
             "services": "Styling",
             "hideFromMain": true
+        },
+        {
+            "tag": "LidaLi",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/lidali/lidali",
+                    "w": 1920,
+                    "h": 1080,
+                    "featured": true
+                },
+                {
+                    "type": "video",
+                    "id": "projects/lidali/lida-lee-official-music-video",
+                    "w": 3840,
+                    "h": 1440
+                }
+            ],
+            "services": "Styling",
+            "hideFromMain": true,
+            "previewOnly": true
+        },
+        {
+            "tag": "Lisova",
+            "files": [
+                {
+                    "type": "video",
+                    "id": "projects/lisova/lisova",
+                    "w": 1920,
+                    "h": 1080,
+                    "featured": true
+                },
+                {
+                    "type": "video",
+                    "id": "projects/lisova/lisova-2",
+                    "w": 1920,
+                    "h": 1080
+                }
+            ],
+            "services": "Styling",
+            "hideFromMain": true,
+            "previewOnly": true
         },
         {
             "tag": "Lokkie SS24",
@@ -1124,31 +1237,6 @@
             "hideFromMain": true
         },
         {
-            "tag": "Personal Project 8",
-            "files": [
-                {
-                    "type": "image",
-                    "id": "projects/personal-project-8/sonya-28",
-                    "w": 1920,
-                    "h": 2880,
-                    "featured": true
-                },
-                {
-                    "type": "image",
-                    "id": "projects/personal-project-8/sonya-29",
-                    "w": 1920,
-                    "h": 2880
-                },
-                {
-                    "type": "image",
-                    "id": "projects/personal-project-8/sonya-46",
-                    "w": 1920,
-                    "h": 1280
-                }
-            ],
-            "services": "Styling"
-        },
-        {
             "tag": "Personal Project 9",
             "files": [
                 {
@@ -1198,37 +1286,6 @@
             ],
             "services": "Production, Styling",
             "hideFromMain": true
-        },
-        {
-            "tag": "RoomRoom",
-            "files": [
-                {
-                    "type": "image",
-                    "id": "projects/roomroom/1c7a932",
-                    "w": 1920,
-                    "h": 1280,
-                    "featured": true
-                },
-                {
-                    "type": "image",
-                    "id": "projects/roomroom/1c7a9663",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/roomroom/1c7a9953",
-                    "w": 1920,
-                    "h": 1280
-                },
-                {
-                    "type": "image",
-                    "id": "projects/roomroom/c7a9640",
-                    "w": 1920,
-                    "h": 2880
-                }
-            ],
-            "services": "Art Direction, Styling"
         },
         {
             "tag": "Sokolroom",

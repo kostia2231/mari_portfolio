@@ -608,6 +608,15 @@
                 transform: translateZ(0);
                 backface-visibility: hidden;
             }
+            /* Safari native-video quirk: даже с playsinline тап по видео
+               иногда перехватывается WebKit на уровне ниже DOM, что мешает
+               .video-controls__play-pause/.sound кликам. Видео — только
+               для отображения; все интеракции через кнопки и
+               .view-image-wrapper. Поэтому полностью выводим элемент из
+               хит-теста. */
+            .view-image > video {
+                pointer-events: none;
+            }
             /* Cross-fade layers: оба <img>-слоя занимают одно и то же место,
                активный имеет opacity 1, бэк — 0. Транзишн opacity даёт плавную
                замену кадра без флэша во время декода нового изображения. */
@@ -658,7 +667,14 @@
 
                 color: black;
                 font-weight: 500;
-                z-index: 110;
+                /* 109, а не 110 (как у .video-controls). При равном z-index
+                   и при том, что этот блок ПОЗЖЕ в DOM, Safari клал его
+                   поверх .video-controls и, несмотря на pointer-events: none,
+                   глушил клики по кнопкам Play/Mute (прогресс работал т.к.
+                   у него собственный position: relative). 109 оставляет
+                   overlay выше .viewer-nav (105) — миниатюры/подпись
+                   по-прежнему кликабельны. */
+                z-index: 109;
             }
             .view-image__text__inner {
                 width: 100vw;
@@ -723,10 +739,19 @@
                 justify-content: space-between;
                 align-items: center;
                 width: 100%;
-                z-index: 110;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.4s ease;
+                /* Blend на самой панели — difference-смешивается с видео
+                   позади неё в контексте #viewport (у #viewport нет своего
+                   stacking context: position relative без z-index). transform
+                   делает .video-controls stacking context'ом, но это влияет
+                   на бленд ДЕТЕЙ, а не на её собственный — сама панель всё
+                   равно блендится с бэкдропом #viewport. z-index 200 поднимает
+                   над viewer-nav (105) / close (111). НЕ оборачиваем в wrapper:
+                   wrapper с position:fixed на мобиле создавал stacking context
+                   и прятал контролы под видео (z-89). */
+                z-index: 200;
                 mix-blend-mode: difference;
             }
             .video-controls.is-visible {
@@ -735,8 +760,27 @@
                 cursor: pointer;
             }
             .video-controls > * {
+                /* Каждому ребёнку — свой слой (position + z-index). В Safari
+                   это возвращает hit-test, когда у ПРЕДКА mix-blend-mode:
+                   сам блендовый элемент click-through, но дети с собственным
+                   слоем кликаются. Без этого клик проваливался сквозь панель
+                   (перемотка работала лишь потому, что попадали во внук
+                   progress-bar). Бленд НЕ дублируем на детях — его даёт
+                   контейнер. */
+                position: relative;
+                z-index: 1;
                 pointer-events: auto;
                 cursor: pointer;
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            }
+            /* Текст кнопок в <span> (JS пишет туда). pointer-events: none —
+               чтобы клик ловила сама кнопка (у неё свой слой), а не span. */
+            .video-controls__play-pause > span,
+            .video-controls__sound > span {
+                pointer-events: none;
             }
 
             .opacity {
@@ -750,6 +794,18 @@
             }
             .mr {
                 margin-right: 5px;
+            }
+            .video-controls__play-pause,
+            .video-controls__sound {
+                /* Сброс дефолтных button-стилей чтобы выглядели как раньше
+                   (когда это были <div>). */
+                background: none;
+                border: 0;
+                padding: 0;
+                font: inherit;
+                line-height: inherit;
+                appearance: none;
+                -webkit-appearance: none;
             }
             .video-controls__play-pause {
                 margin-left: 15px;
@@ -785,7 +841,12 @@
                 opacity: 0.6;
             }
             .viewer-nav {
-                position: fixed;
+                /* absolute (а не fixed), чтобы оставаться внутри stacking-
+                   контекста #viewport — тогда z-index 110 на .video-controls
+                   реально перекрывает нав. С fixed в Safari нав «всплывает»
+                   в корневой контекст и перехватывает клики по кнопкам
+                   Play/Mute (прогресс-бар «случайно» работал по центру). */
+                position: absolute;
                 top: 0;
                 bottom: 0;
                 width: 50%;
@@ -960,9 +1021,7 @@
                 }
                 .video-controls {
                     position: fixed;
-                    left: 0;
-                    transform: translateY(-50%);
-                    z-index: 111;
+                    z-index: 200;
                 }
                 .information {
                     font-size: 32px;
@@ -996,6 +1055,12 @@
                     padding: 10px;
                     box-sizing: border-box;
                     background: transparent;
+                    /* Без фейда на мобиле — инструкции гаснут мгновенно при
+                       открытии проекта (см. openProject в main.ts). */
+                    transition: none;
+                }
+                .instructions.is-hidden {
+                    display: none;
                 }
             }
         </style>
@@ -1012,8 +1077,12 @@
 
         <div id="viewport">
             <div class="video-controls">
-                <div class="video-controls__play-pause">Pause</div>
-                <div class="video-controls__sound">Unmute</div>
+                <button type="button" class="video-controls__play-pause"
+                    ><span>Pause</span></button
+                >
+                <button type="button" class="video-controls__sound"
+                    ><span>Unmute</span></button
+                >
                 <div
                     class="video-controls__progress"
                     style="

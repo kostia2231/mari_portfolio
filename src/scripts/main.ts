@@ -26,7 +26,10 @@ import { loadManifest, type MediaFile, type Project } from "../lib/manifest"
 type GalleryItem = MediaFile & { projectTag: string; hideFromMain?: boolean }
 
 const projectFilesMap = new Map<string, MediaFile[]>()
-const projectMetaMap = new Map<string, { services?: string }>()
+const projectMetaMap = new Map<
+    string,
+    { services?: string; mute?: boolean }
+>()
 const preloadedProjects = new Set<string>()
 const indexPreloadUrls: string[] = []
 
@@ -264,9 +267,14 @@ async function loadFromManifest() {
         aboutIdx >= 0 ? manifest.projects.splice(aboutIdx, 1)[0] : null
 
     // Populate project files map for fast lookups (preload, click → first file).
+    // previewOnly: featured-файлы (из main/) служат только превью на главной —
+    // в вьюер их не отдаём.
     manifest.projects.forEach((p) => {
-        projectFilesMap.set(p.tag, p.files)
-        projectMetaMap.set(p.tag, { services: p.services })
+        const viewerFiles = p.previewOnly
+            ? p.files.filter((f) => !f.featured)
+            : p.files
+        projectFilesMap.set(p.tag, viewerFiles)
+        projectMetaMap.set(p.tag, { services: p.services, mute: p.mute })
     })
 
     // Lo-res очень лёгкий (~5 KB JPEG) — грузим для ВСЕХ файлов сразу.
@@ -513,12 +521,19 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
    ============================================================ */
 
 function openProjectForFile(projectTag: string, file: MediaFile) {
-    const initial = file.type === "video" ? videoSrcUrl(file) : lowResUrl(file)
-    const poster = file.type === "video" ? posterUrl(file) : null
     const files = projectFilesMap.get(projectTag) ?? []
     const idx = files.findIndex((f) => f.id === file.id)
+    // Если кликнутый файл отсутствует в списке вьюера (например, previewOnly
+    // featured-файл) — открываем с первого доступного, чтобы не было короткой
+    // вспышки исключённого кадра до updateViewerFrame.
+    const startFile = idx >= 0 ? file : files[0] ?? file
     const startIndex = idx >= 0 ? idx : 0
-    openProject(projectTag, file.type, initial, poster, startIndex)
+    const initial =
+        startFile.type === "video"
+            ? videoSrcUrl(startFile)
+            : lowResUrl(startFile)
+    const poster = startFile.type === "video" ? posterUrl(startFile) : null
+    openProject(projectTag, startFile.type, initial, poster, startIndex)
 }
 
 async function openProject(
@@ -553,17 +568,38 @@ async function openProject(
     const controls = $<HTMLElement>(".video-controls")
 
     $<HTMLElement>(".project-title-ui").textContent = projectTag
+    const meta = projectMetaMap.get(projectTag)
     const servicesEl = document.querySelector<HTMLElement>(".project-services")
     if (servicesEl) {
-        const services = projectMetaMap.get(projectTag)?.services ?? ""
+        const services = meta?.services ?? ""
         servicesEl.textContent = services
         servicesEl.style.display = services ? "" : "none"
+    }
+
+    // У проектов с meta.mute = true скрываем кнопку Mute/Unmute (видео всё
+    // равно стартует в muted). Класс на .video-controls, чтобы скрытие
+    // переживало переключения между видео/картинкой внутри проекта.
+    const btnSound = $<HTMLElement>(".video-controls__sound")
+    if (meta?.mute) {
+        controls.classList.add("is-forced-mute")
+        btnSound.style.display = "none"
+    } else {
+        controls.classList.remove("is-forced-mute")
+        btnSound.style.display = ""
     }
 
     if (initialType === "video") {
         controls.style.display = "flex"
         const posterAttr = poster ? ` poster="${poster}"` : ""
-        stage.innerHTML = `<video id="viewer-main-vid" src="${initialUrl}"${posterAttr} autoplay loop muted playsinline style="width:100%; height:100%; object-fit: contain;"></video>`
+        // БЕЗ HTML-атрибута `autoplay`: Safari при muted+autoplay считает
+        // воспроизведение «всегда разрешённым» и через пару кадров
+        // отменяет ручной vid.pause(). Стартуем воспроизведение явным
+        // .play() ниже — тогда .pause()/Play кнопка работает корректно.
+        stage.innerHTML = `<video id="viewer-main-vid" src="${initialUrl}"${posterAttr} loop muted playsinline style="width:100%; height:100%; object-fit: contain;"></video>`
+        const newVid = document.getElementById(
+            "viewer-main-vid",
+        ) as HTMLVideoElement | null
+        newVid?.play().catch(() => {})
     } else {
         controls.style.display = "none"
         const pre = new Image()
@@ -606,10 +642,17 @@ async function openProject(
 
     startProgressLoop()
 
-    setTimeout(() => {
-        if (!isViewerOpen) return
+    // На мобиле прячем инструкции сразу при открытии проекта, без 150ms
+    // задержки (фейд-анимация там тоже отключена в CSS). На десктопе —
+    // прежний короткий delay, чтобы угасание попадало в общий ритм.
+    if (isMobile()) {
         document.querySelector(".instructions")?.classList.add("is-hidden")
-    }, 150)
+    } else {
+        setTimeout(() => {
+            if (!isViewerOpen) return
+            document.querySelector(".instructions")?.classList.add("is-hidden")
+        }, 150)
+    }
 
     document.querySelector(".ui-layer__bottom")?.classList.add("is-hidden")
     document
@@ -707,7 +750,13 @@ function renderViewerFile(file: MediaFile) {
             "viewer-main-vid",
         ) as HTMLVideoElement | null
         if (!vid) {
-            stage.innerHTML = `<video id="viewer-main-vid" src="${url}" poster="${poster}" autoplay loop muted playsinline></video>`
+            // Без HTML-атрибута autoplay (см. openProject) — стартуем .play()
+            // вручную, иначе Safari переигрывает наш pause().
+            stage.innerHTML = `<video id="viewer-main-vid" src="${url}" poster="${poster}" loop muted playsinline></video>`
+            const newVid = document.getElementById(
+                "viewer-main-vid",
+            ) as HTMLVideoElement | null
+            newVid?.play().catch(() => {})
         } else if (!vid.src.includes(file.id)) {
             vid.poster = poster
             vid.src = url
@@ -922,12 +971,19 @@ function startProgressLoop() {
         const bar = document.querySelector<HTMLElement>(
             ".video-controls__progress-bar",
         )
-        const btnPlay = document.querySelector<HTMLElement>(
-            ".video-controls__play-pause",
-        )
-        const btnSound = document.querySelector<HTMLElement>(
-            ".video-controls__sound",
-        )
+        // Пишем в <span> внутри кнопки, а не в саму кнопку: бленд живёт на
+        // span'е (см. CSS). textContent на кнопке снёс бы span и сломал
+        // визуальный difference. Fallback на саму кнопку — на всякий.
+        const btnPlay =
+            document.querySelector<HTMLElement>(
+                ".video-controls__play-pause > span",
+            ) ??
+            document.querySelector<HTMLElement>(".video-controls__play-pause")
+        const btnSound =
+            document.querySelector<HTMLElement>(
+                ".video-controls__sound > span",
+            ) ??
+            document.querySelector<HTMLElement>(".video-controls__sound")
         const tCur = document.querySelector<HTMLElement>(
             ".video-controls__time-current",
         )
@@ -1134,38 +1190,37 @@ function initViewerControls() {
 
 function initVideoControlsButtons() {
     const videoControls = $<HTMLElement>(".video-controls")
-    const btnPlay = $<HTMLElement>(".video-controls__play-pause")
-    const btnSound = $<HTMLElement>(".video-controls__sound")
-    const progressWrap = $<HTMLElement>(".video-controls__progress")
 
-    videoControls.addEventListener("click", (e) => e.stopPropagation())
-
-    btnPlay.addEventListener("click", () => {
+    // Один делегированный onclick на .video-controls вместо четырёх
+    // адресных. При dev-HMR addEventListener копил по 2-3 хендлера на тех
+    // же DOM-узлах → видео не паузилось (двойной toggle). onclick
+    // перезаписывается, гарантированно один.
+    videoControls.onclick = (e) => {
+        e.stopPropagation()
+        const target = e.target as HTMLElement
         const vid = document.getElementById(
             "viewer-main-vid",
         ) as HTMLVideoElement | null
         if (!vid) return
-        if (vid.paused) vid.play()
-        else vid.pause()
-    })
 
-    btnSound.addEventListener("click", () => {
-        const vid = document.getElementById(
-            "viewer-main-vid",
-        ) as HTMLVideoElement | null
-        if (!vid) return
-        vid.muted = !vid.muted
-    })
-
-    progressWrap.addEventListener("click", (e) => {
-        const vid = document.getElementById(
-            "viewer-main-vid",
-        ) as HTMLVideoElement | null
-        if (!vid) return
-        const rect = progressWrap.getBoundingClientRect()
-        const pos = (e.clientX - rect.left) / rect.width
-        vid.currentTime = pos * vid.duration
-    })
+        if (target.closest(".video-controls__play-pause")) {
+            if (vid.paused) vid.play().catch(() => {})
+            else vid.pause()
+            return
+        }
+        if (target.closest(".video-controls__sound")) {
+            vid.muted = !vid.muted
+            return
+        }
+        const progressWrap = target.closest<HTMLElement>(
+            ".video-controls__progress",
+        )
+        if (progressWrap) {
+            const rect = progressWrap.getBoundingClientRect()
+            const pos = (e.clientX - rect.left) / rect.width
+            vid.currentTime = pos * vid.duration
+        }
+    }
 }
 
 /* ============================================================

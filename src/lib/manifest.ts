@@ -24,6 +24,10 @@ export interface Project {
     position?: number;
     /** Hide from main gallery; still appears in index and via type filters. */
     hideFromMain?: boolean;
+    /** If true, files in `main/` (featured) are used as preview only and excluded from the viewer/index thumb strip. */
+    previewOnly?: boolean;
+    /** If true, videos in this project are force-muted in the viewer and the Mute/Unmute button is hidden. */
+    mute?: boolean;
     files: MediaFile[];
 }
 
