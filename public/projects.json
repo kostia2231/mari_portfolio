@@ -679,7 +679,9 @@
                     "h": 3414
                 }
             ],
-            "hideFromMain": true
+            "services": "Styling",
+            "hideFromMain": true,
+            "mute": true
         },
         {
             "tag": "Backstage 2",
@@ -691,7 +693,9 @@
                     "h": 1920
                 }
             ],
-            "hideFromMain": true
+            "services": "Styling",
+            "hideFromMain": true,
+            "mute": true
         },
         {
             "tag": "Backstage 3",
@@ -703,7 +707,9 @@
                     "h": 1080
                 }
             ],
-            "hideFromMain": true
+            "services": "Styling",
+            "hideFromMain": true,
+            "mute": true
         },
         {
             "tag": "Backstage 4",
@@ -715,7 +721,9 @@
                     "h": 1920
                 }
             ],
-            "hideFromMain": true
+            "services": "Styling",
+            "hideFromMain": true,
+            "mute": true
         },
         {
             "tag": "Backstage 5",
@@ -727,7 +735,9 @@
                     "h": 1080
                 }
             ],
-            "hideFromMain": true
+            "services": "Styling",
+            "hideFromMain": true,
+            "mute": true
         },
         {
             "tag": "Backstage 6",
@@ -739,7 +749,9 @@
                     "h": 640
                 }
             ],
-            "hideFromMain": true
+            "services": "Styling",
+            "hideFromMain": true,
+            "mute": true
         },
         {
             "tag": "Buty",

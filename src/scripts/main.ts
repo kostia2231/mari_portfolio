@@ -475,12 +475,20 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
     const li = document.createElement("li")
     li.className = "index-project-row"
     li.style.transitionDelay = `${idx * 0.05}s`
-    const hasImage = project.files.some((f) => f.type === "image")
-    const hasVideo = project.files.some((f) => f.type === "video")
+
+    // previewOnly: в индексе показываем ТОЛЬКО превью из main/ (featured),
+    // а не весь набор файлов. Миниатюры, счётчик и флаги фильтра считаем по
+    // этому же набору. Если featured нет — фоллбэк на все файлы.
+    const featured = project.files.filter((f) => f.featured)
+    const displayFiles =
+        project.previewOnly && featured.length > 0 ? featured : project.files
+
+    const hasImage = displayFiles.some((f) => f.type === "image")
+    const hasVideo = displayFiles.some((f) => f.type === "video")
     li.dataset.hasImage = hasImage ? "1" : "0"
     li.dataset.hasVideo = hasVideo ? "1" : "0"
 
-    const count = project.files.length
+    const count = displayFiles.length
     const countLine =
         count > 1 ? `<br><span class="index-count">${count} items</span>` : ""
     li.innerHTML = `
@@ -499,7 +507,7 @@ function createProjectRow(project: Project, idx: number): HTMLLIElement {
     })
 
     const thumbs = li.querySelector<HTMLElement>(".index-thumbnails")!
-    thumbs.innerHTML = project.files
+    thumbs.innerHTML = displayFiles
         .map((file, i) => {
             const cls = i >= MAX_THUMBS ? "thumb-extra" : ""
             if (file.type === "video") {
