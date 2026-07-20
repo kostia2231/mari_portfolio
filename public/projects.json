@@ -231,7 +231,7 @@
                     "h": 2400
                 }
             ],
-            "services": "Art Direction, Producing",
+            "services": "Styling",
             "position": 4
         },
         {
@@ -531,7 +531,7 @@
                     "featured": true
                 }
             ],
-            "services": "Styling",
+            "services": "Creative Production, Styling",
             "position": 11
         },
         {
@@ -770,7 +770,7 @@
                     "h": 1080
                 }
             ],
-            "services": "Styling",
+            "services": "Creative Production, Styling",
             "hideFromMain": true,
             "previewOnly": true
         },
@@ -790,7 +790,8 @@
                     "w": 1920,
                     "h": 2399
                 }
-            ]
+            ],
+            "services": "Styling"
         },
         {
             "tag": "Home Campaign pt.1",
@@ -914,12 +915,6 @@
                     "w": 1920,
                     "h": 1080,
                     "featured": true
-                },
-                {
-                    "type": "video",
-                    "id": "projects/lidali/lida-lee-official-music-video",
-                    "w": 3840,
-                    "h": 1440
                 }
             ],
             "services": "Styling",
@@ -943,7 +938,7 @@
                     "h": 1080
                 }
             ],
-            "services": "Styling",
+            "services": "Creative Production, Styling",
             "hideFromMain": true,
             "previewOnly": true
         },
