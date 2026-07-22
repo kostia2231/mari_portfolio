@@ -495,7 +495,7 @@
                 right: 5px;
                 display: flex;
                 flex-direction: column;
-                gap: 20px;
+                gap: 30px;
                 pointer-events: none;
                 z-index: 2;
             }
@@ -519,6 +519,11 @@
                 display: block;
             }
             @media (max-width: 767px) {
+                .about-images {
+                    padding-top: 100vh;
+                    gap: 10px;
+                    height: 100vh;
+                }
                 .about-images .about-tile {
                     height: auto;
                     max-width: calc(100vw - 10px);
